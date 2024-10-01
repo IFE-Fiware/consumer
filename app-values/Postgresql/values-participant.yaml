@@ -1,0 +1,8 @@
+primary:
+  initdb:
+    scripts:
+      init.sql: |
+        CREATE USER keycloak WITH PASSWORD 'keycloak' CREATEDB;
+        CREATE DATABASE keycloak OWNER keycloak;
+        CREATE USER usersroles WITH PASSWORD 'usersroles' CREATEDB;
+        CREATE DATABASE usersroles OWNER usersroles;

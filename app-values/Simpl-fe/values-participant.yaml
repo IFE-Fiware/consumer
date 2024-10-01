@@ -1,0 +1,18 @@
+hostBe: participant.be.dataprovider02.int.simpl-europe.eu
+hostFe: participant.fe.dataprovider02.int.simpl-europe.eu
+cors:
+  allowOrigin: https://participant.fe.dataprovider02.int.simpl-europe.eu,http://localhost:4202,http://localhost:4203,http://localhost:3000
+ingress:
+  issuer: dev-prod
+
+env:
+- name: APPLICATION
+  value: participant-utility
+- name: API_URL
+  value: "https://participant.be.dataprovider02.int.simpl-europe.eu"
+- name: KEYCLOAK_URL
+  value: "https://participant.be.dataprovider02.int.simpl-europe.eu/auth"
+- name: KEYCLOAK_REALM
+  value: "participant"
+- name: KEYCLOAK_CLIENT_ID
+  value: "frontend-cli"

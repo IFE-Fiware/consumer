@@ -1,8 +1,4 @@
 replicaCount: 1
-image:
-  repository: "code.europa.eu:4567/simpl/simpl-open/development/iaa/simpl-fe"
-  pullPolicy: IfNotPresent
-  tag: "0.0.1"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

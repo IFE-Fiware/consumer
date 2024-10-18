@@ -1,17 +1,21 @@
 argocd:
-  appname: consumer01-iaa
+  appname: ${NAMESPACE}
   namespace: argocd
 
 cluster:
   address: https://kubernetes.default.svc
-  namespace: consumer01-iaa
+  namespace: ${NAMESPACETAG}
 
-namespaceTag: consumer03
-domainSuffix: int.simpl-europe.eu
+namespaceTag: ${NAMESPACETAG}
+domainSuffix: ${DOMAINSUFFIX}
+
+hashicorp:
+  service: "http://vault.vault.svc.cluster.local:8200"
+secretEngine: ${SECRETENGINE}
 
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
-  branch: feature/SIMPL-4159
+  branch: develop
 
 postgresql:
   repo_URL: https://charts.bitnami.com/bitnami
@@ -48,14 +52,14 @@ simpl_cloud_gateway:
 
 users_roles:
   projectID: "771"
-  targetRevision: 0.0.4
+  targetRevision: 0.0.41-591.hotfix.b1dfc6f7
   chart_name: users-roles
   valueFiles:
     - values.yaml
 
 simpl_fe:
   projectID: "769"
-  targetRevision: 0.0.4
+  targetRevision: 0.0.4-620.hotfix.48569299
   chart_name: simpl-fe
   valueFiles:
     - values.yaml

@@ -37,14 +37,14 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
-        apiUrl: "https://participant.be.{{ .Values.namespaceTag }}.int.simpl-europe.eu"
+        apiUrl: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
         extraEnvVars:
         - name: KC_HOSTNAME_ADMIN_URL
-          value: "https://participant.be.{{ .Values.namespaceTag }}.int.simpl-europe.eu/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
         - name: KC_HOSTNAME_URL
-          value: "https://participant.be.{{ .Values.namespaceTag }}.int.simpl-europe.eu/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cloud_gateway.projectID }}/packages/helm/stable"
-    path: ''
+    path: "''"
     targetRevision: {{ .Values.simpl_cloud_gateway.targetRevision }}
     chart: {{ .Values.simpl_cloud_gateway.chart_name }}
     helm:
@@ -69,7 +69,7 @@ spec:
           cors:
             allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.users_roles.projectID }}/packages/helm/stable"
-    path: ''
+    path: "''"
     targetRevision: {{ .Values.users_roles.targetRevision }}
     chart: {{ .Values.users_roles.chart_name }}
     helm:
@@ -87,8 +87,9 @@ spec:
             password: "authority"
           cors:
             allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
-          env:
-            SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/usersroles"
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/usersroles"
+          SPRING_DATA_REDIS_HOST: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
   #- repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.tls_gateway.projectID }}/packages/helm/stable"
   #  path: ''
   #  targetRevision: {{ .Values.tls_gateway.targetRevision }}
@@ -104,7 +105,7 @@ spec:
       values: |
         fullnameOverride: {{ .Values.redis.nameOverride }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_fe.projectID }}/packages/helm/stable"
-    path: ''
+    path: "''"
     targetRevision: {{ .Values.simpl_fe.targetRevision }}
     chart: {{ .Values.simpl_fe.chart_name }}
     helm:
@@ -131,7 +132,7 @@ spec:
         - name: KEYCLOAK_CLIENT_ID
           value: "frontend-cli"
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.poc_ui.projectID }}/packages/helm/stable"
-    path: ''
+    path: "''"
     targetRevision: {{ .Values.poc_ui.targetRevision }}
     chart: {{ .Values.poc_ui.chart_name }}
     helm:

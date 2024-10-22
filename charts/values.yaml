@@ -7,6 +7,10 @@ cluster:
   namespace: ${NAMESPACETAG}
 
 namespaceTag: ${NAMESPACETAG}
+authority:
+  namespaceTag: ${AUTHNAMESPACETAG}
+  keycloakClientID: ${AUTHKEYCLOAKID}
+  keycloakSecret: ${AUTHKEYCLOAKSECRET}
 domainSuffix: ${DOMAINSUFFIX}
 
 hashicorp:
@@ -71,5 +75,5 @@ tls_gateway:
 
 poc_ui:
   projectID: "747"
-  targetRevision: v0.0.2-O-release-1-4-1.275.d842a24b
+  targetRevision: 0.1.5
   chart_name: charts

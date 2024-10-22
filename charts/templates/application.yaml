@@ -80,9 +80,9 @@ spec:
       values: |
         global:
           hostBe: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-          hostTls: tls.authority.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          hostTls: tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
           hostFe: participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-          authorityUrl: https://authority.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          authorityUrl: https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
           keystore:
             password: "authority"
           cors:

@@ -1,0 +1,17 @@
+#Service port of component SD-Tooling-Api-Validation
+xsfcAdvsearchServicePort: 8080
+
+#Container port of component SD-Tooling-Api-Validation
+xsfcAdvsearchContainerPort: 8080
+
+
+#specify 'dev' for dev environment or 'dev-int' for integration environment
+vaultEnvIdentifier: dev-int
+
+#Domain associated with Dev Cluster (don't modify it)
+domain: int.simpl-europe.eu
+
+#ID of persistentVolumeClaims associated with NFS Storage
+schemaVolumeClaim: nfs-storage-pvc-xsfc
+#Mount path used for schema storage
+schemaPvcMountPath: /data

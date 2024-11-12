@@ -1,12 +1,5 @@
+server-port: &server-port 443
 replicaCount: 1
-
-global:
-  profile: participant
-  ingress:
-    issuer: dev-prod
-  keystore:
-    password: "authority"
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -28,33 +21,18 @@ podLabels: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1001
+
 
 service:
-  type: ClusterIP
-  port: 8080
-
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  type: LoadBalancer
+  port: *server-port
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -71,39 +49,43 @@ resources: {}
 livenessProbe:
   httpGet:
     path: "/actuator/health/liveness"
-    port: http
-  initialDelaySeconds: 120
-  periodSeconds: 5
+    port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 30
   failureThreshold: 10
 readinessProbe:
   httpGet:
     path: "/actuator/health/readiness"
-    port: http
-  initialDelaySeconds: 120
-  periodSeconds: 5
+    port: 8080
+  initialDelaySeconds: 60
+  periodSeconds: 30
   failureThreshold: 10
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
   maxReplicas: 1
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: {}
-
+volumes:
+  - name: spring-config
+    configMap:
+      name: tls-gateway-spring-configmap
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: {}
+volumeMounts:
+  - name: spring-config
+    mountPath: /config/
 
 envFrom:
   - configMapRef:
-      name: users-roles-configmap
+      name: tls-gateway-env-configmap
 
 nodeSelector: {}
 
@@ -111,16 +93,38 @@ tolerations: []
 
 affinity: {}
 
-db:
-  username: "usersroles"
-  password: "usersroles"
+# Spring Cloud Gateway Routes
+springRoutes: []
+
+
+# Custom Attribute Based Access Control
+# This is a complete example, if you omit method, all are matched.
+#routes:
+#  publicUrls:
+#    - method: GET
+#      path: "/swagger-ui.html"
+#  deniedUrls:
+#    - method: GET
+#      path: "todeny"
+#  abac:
+#    - path: "rbacPath"
+#      disableEphemeralProofCheck: true
+#      roles:
+#        - NOTARY
+#        - T1UAR_M
+routes: {}
+
+# Springdoc Swagger-UI
+swaggerUrls: []
+
+ssl:
+  keystore:
+    password: "authority"
+
+global:
+  profile: participant
 
 redis:
   port: "6379"
   username: "default"
-  password: "admin" # update this
-
-keycloak:
-  master:
-    user: "admin"
-    password: "admin"
+  password: "admin"

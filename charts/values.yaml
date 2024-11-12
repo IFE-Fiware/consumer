@@ -1,21 +1,21 @@
+authority:
+  namespaceTag: ${AUTHNAMESPACETAG}
+  keycloakClientID: "federated-catalogue"
+  keycloakSecret: ${AUTHKEYCLOAKSECRET}
+
 argocd:
   appname: ${NAMESPACE}
   namespace: argocd
 
+project: default
+
 cluster:
   address: https://kubernetes.default.svc
-  namespace: ${NAMESPACETAG}
+  namespace: ${NAMESPACE}
+  kubeStateHost: kube-prometheus-stack-kube-state-metrics.devsecopstools.svc.cluster.local:8080
 
 namespaceTag: ${NAMESPACETAG}
-authority:
-  namespaceTag: ${AUTHNAMESPACETAG}
-  keycloakClientID: ${AUTHKEYCLOAKID}
-  keycloakSecret: ${AUTHKEYCLOAKSECRET}
 domainSuffix: ${DOMAINSUFFIX}
-
-hashicorp:
-  service: "http://vault.vault.svc.cluster.local:8200"
-secretEngine: ${SECRETENGINE}
 
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
@@ -33,47 +33,85 @@ postgresql:
 keycloak:
   repo_URL: https://charts.bitnami.com/bitnami
   chart_name: keycloak
-  targetRevision: "21.2.2"
+  targetRevision: "22.2.5"
   nameOverride: keycloak
   valueFiles:
     - values.yaml
-    - values-participant.yaml
 
 redis:
   repo_URL: 'https://charts.bitnami.com/bitnami'
-  targetRevision: 20.1.0
+  targetRevision: 19.6.0
   chart_name: redis
   nameOverride: redis
   valueFiles:
     - values.yaml
 
-simpl_cloud_gateway:
-  projectID: "772"
-  targetRevision: 0.0.4
-  chart_name: simpl-cloud-gateway
+simpl_catalogue_client:
+  projectID: "937"
+  targetRevision: 0.1.6
+  chart_name: charts
   valueFiles:
     - values.yaml
 
+simpl_cloud_gateway:
+  projectID: "772"
+  targetRevision: 0.6.1
+  chart_name: simpl-cloud-gateway
+  valueFiles:
+    - values.yaml
+    - values-routes.yaml
+
+xsfc_advsearch_be:
+  projectID: "891"
+  targetRevision: 1.1.0-rc.59
+  chart_name: xsfc-advsearch
+  valueFiles:
+    - values.yaml
+  nameOverride: sd
+
 users_roles:
   projectID: "771"
-  targetRevision: 0.0.41-591.hotfix.b1dfc6f7
+  targetRevision: 0.6.5
   chart_name: users-roles
   valueFiles:
     - values.yaml
 
 simpl_fe:
   projectID: "769"
-  targetRevision: 0.0.4-620.hotfix.48569299
+  targetRevision: 0.6.2
   chart_name: simpl-fe
   valueFiles:
     - values.yaml
+    - values-participant.yaml
 
 tls_gateway:
   projectID: "860"
-  targetRevision: 0.0.4
+  targetRevision: 0.6.1
   chart_name: tls-gateway
+  valueFiles:
+    - values.yaml
+    - values-routes.yaml
 
-poc_ui:
-  projectID: "747"
+sd_ui:
+  projectID: "923"
   targetRevision: 0.1.5
   chart_name: charts
+  valueFiles:
+    - values.yaml
+
+monitoring:
+  enabled: true
+  operator:
+    repo_URL: https://helm.elastic.co/
+    chart_name: eck-operator
+    targetRevision: "2.14.0"
+    nameOverride: eck-operator
+    valueFiles:
+      - values.yaml
+  projectID: "828"
+  targetRevision: v0.1.2
+  chart_name: eck-monitoring
+  fullnameOverride: elastic
+  valueFiles:
+    - values.yaml
+    - values-size.yaml

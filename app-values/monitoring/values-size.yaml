@@ -1,0 +1,18 @@
+elasticsearch:
+  count: 2
+  resources:
+    requests:
+      memory: 4Gi
+    limits:
+      memory: 4Gi
+      cpu: "1"  
+
+kibana: 
+  count: 1
+
+filebeat:
+  count: 0
+
+logstash:
+  count_beats: 1
+  count_syslog: 0

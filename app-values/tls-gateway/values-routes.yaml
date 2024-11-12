@@ -1,0 +1,8 @@
+routes:
+  public-urls:
+    - method: GET
+      path: "/actuator/**"
+  abac:
+    - method: POST
+      path: "/user-api/mtls/ephemeral-proof"
+      disable-ephemeral-proof-check: true

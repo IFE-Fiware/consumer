@@ -97,8 +97,8 @@ spec:
           keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
         global:
           hostBe: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-          hostTls: tls.authority.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-          authorityUrl: https://authority.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          hostTls: tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
+          authorityUrl: https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
           cors:
             allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.users_roles.projectID }}/packages/helm/stable"
@@ -113,7 +113,7 @@ spec:
       values: |
         global:
           hostBe: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-          hostTls: tls.authority.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          hostTls: tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
         db:
           url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/usersroles"
         redis:
@@ -169,35 +169,7 @@ spec:
         - name: KEYCLOAK_REALM
           value: "participant"
         - name: KEYCLOAK_CLIENT_ID
-          value: "frontend-cli"
-  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.sd_ui.projectID }}/packages/helm/stable"
-    path: ''
-    targetRevision: {{ .Values.sd_ui.targetRevision }}
-    chart: {{ .Values.sd_ui.chart_name }}
-    helm:
-      valueFiles:
-        {{- range .Values.sd_ui.valueFiles }}
-        - $values/app-values/simpl-sd-ui/{{ . }}
-        {{- end }}
-      values: |
-        ingress:
-          hosts:
-            - host: sd-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-              paths:
-              - path: /
-                pathType: ImplementationSpecific
-          tls:
-            - secretName: sd-ui-tld-secret
-              hosts:
-                - sd-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-        env:
-          AUTH_KEYCLOAK_ID: "{{ .Values.authority.keycloakClientID }}"
-          AUTH_KEYCLOAK_ISSUER: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}/auth/realms/authority/"
-          AUTH_KEYCLOAK_SECRET: "{{ .Values.authority.keycloakSecret }}"
-          PUBLIC_FC_URL: "https://fc-server.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_ADAPTER_URL: "https://adapter.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_CREATION_WIZARD_API_URL: "https://creation-wizard-api.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_SIGNER_URL: "https://signer.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+          value: "frontend-cli" 
   {{- if .Values.monitoring.enabled }}
   - repoURL: {{ .Values.monitoring.operator.repo_URL }}
     targetRevision: {{ .Values.monitoring.operator.targetRevision }}

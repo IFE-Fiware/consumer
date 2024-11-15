@@ -92,13 +92,6 @@ tls_gateway:
     - values.yaml
     - values-routes.yaml
 
-sd_ui:
-  projectID: "923"
-  targetRevision: 0.1.5
-  chart_name: charts
-  valueFiles:
-    - values.yaml
-
 monitoring:
   enabled: true
   operator:

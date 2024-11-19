@@ -94,7 +94,13 @@ tolerations: []
 affinity: {}
 
 # Spring Cloud Gateway Routes
-springRoutes: []
+springRoutes:
+  - id: users-roles
+    uri: ${users-roles.url}
+    predicates:
+      - Path=/user-api/mtls/**
+    filters:
+      - StripPrefix=1
 
 
 # Custom Attribute Based Access Control

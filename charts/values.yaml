@@ -71,7 +71,7 @@ xsfc_advsearch_be:
 
 users_roles:
   projectID: "771"
-  targetRevision: 0.6.6
+  targetRevision: 0.6.5
   chart_name: users-roles
   valueFiles:
     - values.yaml
@@ -86,7 +86,7 @@ simpl_fe:
 
 tls_gateway:
   projectID: "860"
-  targetRevision: 0.6.2
+  targetRevision: 0.6.1
   chart_name: tls-gateway
   valueFiles:
     - values.yaml

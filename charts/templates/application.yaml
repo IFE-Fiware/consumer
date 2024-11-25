@@ -137,7 +137,7 @@ spec:
         redis:
           host: "redis-master.{{ .Release.Namespace }}.svc.cluster.local"
         hostT2: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
-        authorityUrlT1: "https://t1.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+        authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
   - repoURL: {{ .Values.redis.repo_URL }}
     targetRevision: {{ .Values.redis.targetRevision }}
     chart: {{ .Values.redis.chart_name }}

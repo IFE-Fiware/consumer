@@ -37,18 +37,18 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
-        apiUrl: "https://participant.be.{{ .Values.namespaceTag }}.int.simpl-europe.eu"
+        apiUrl: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
         externalDatabase:
           host: "postgresql.{{ .Release.Namespace }}.svc.cluster.local"
         extraEnvVars:
         - name: KC_HOSTNAME_ADMIN
-          value: "https://participant.be.{{ .Values.namespaceTag }}.int.simpl-europe.eu/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
         - name: KC_HOSTNAME
-          value: "https://participant.be.{{ .Values.namespaceTag }}.int.simpl-europe.eu/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
         - name: USERS_ROLES_BASE_URL
           value: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080"
         - name: KEYCLOAK_BASE_URL
-          value: "https://participant.be.{{ .Values.namespaceTag }}.int.simpl-europe.eu/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
         - name: REALM
           value: "participant"
         - name: KEYCLOAK_EXTRA_ARGS
@@ -83,7 +83,7 @@ spec:
               hosts:
                 - catalogue-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cloud_gateway.projectID }}/packages/helm/stable"
-    path: "''"
+    path: ''
     targetRevision: {{ .Values.simpl_cloud_gateway.targetRevision }}
     chart: {{ .Values.simpl_cloud_gateway.chart_name }}
     helm:
@@ -102,7 +102,7 @@ spec:
           cors:
             allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.users_roles.projectID }}/packages/helm/stable"
-    path: "''"
+    path: ''
     targetRevision: {{ .Values.users_roles.targetRevision }}
     chart: {{ .Values.users_roles.chart_name }}
     helm:
@@ -117,27 +117,7 @@ spec:
         db:
           url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/usersroles"
         redis:
-          host: "redis-master.{{ .Release.Namespace }}.svc.cluster.local"
-  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.tls_gateway.projectID }}/packages/helm/stable"
-    path: ''
-    targetRevision: {{ .Values.tls_gateway.targetRevision }}
-    chart: {{ .Values.tls_gateway.chart_name }}
-    helm:
-      valueFiles:
-        {{- range .Values.tls_gateway.valueFiles }}
-        - $values/app-values/tls-gateway/{{ . }}
-        {{- end }}
-      values: |
-        global:
-          cors:
-            allowOrigin: https://authority.fe.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
-        microservices:
-          usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
-          keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
-        redis:
-          host: "redis-master.{{ .Release.Namespace }}.svc.cluster.local"
-        hostT2: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
-        authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+          host: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
   - repoURL: {{ .Values.redis.repo_URL }}
     targetRevision: {{ .Values.redis.targetRevision }}
     chart: {{ .Values.redis.chart_name }}
@@ -149,7 +129,7 @@ spec:
       values: |
         fullnameOverride: {{ .Values.redis.nameOverride }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_fe.projectID }}/packages/helm/stable"
-    path: "''"
+    path: ''
     targetRevision: {{ .Values.simpl_fe.targetRevision }}
     chart: {{ .Values.simpl_fe.chart_name }}
     helm:
@@ -169,7 +149,27 @@ spec:
         - name: KEYCLOAK_REALM
           value: "participant"
         - name: KEYCLOAK_CLIENT_ID
-          value: "frontend-cli" 
+          value: "frontend-cli"
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.tls_gateway.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.tls_gateway.targetRevision }}
+    chart: {{ .Values.tls_gateway.chart_name }}
+    helm:
+      valueFiles:
+        {{- range .Values.tls_gateway.valueFiles }}
+        - $values/app-values/tls-gateway/{{ . }}
+        {{- end }}
+      values: |
+        microservices:
+          usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+          keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
+        global:
+          cors:
+            allowOrigin: https://authority.fe.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+        redis:
+          host: "redis-master.{{ .Release.Namespace }}.svc.cluster.local"
+        hostT2: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+        authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
   {{- if .Values.monitoring.enabled }}
   - repoURL: {{ .Values.monitoring.operator.repo_URL }}
     targetRevision: {{ .Values.monitoring.operator.targetRevision }}

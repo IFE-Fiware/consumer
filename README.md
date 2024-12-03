@@ -1,5 +1,25 @@
 # Consumer Agent
 
+<!-- TOC -->
+* [Consumer Agent](#consumer-agent)
+  * [Description](#description)
+  * [Pre-Requisites](#pre-requisites)
+    * [Onboarding](#onboarding)
+    * [Tools](#tools)
+  * [Installation](#installation)
+    * [Prerequisites](#prerequisites)
+      * [Create the Namespace](#create-the-namespace)
+      * [Verify the Namespace](#verify-the-namespace)
+    * [Deployment using ArgoCD](#deployment-using-argocd)
+    * [Manual deployment](#manual-deployment)
+      * [Files preparation](#files-preparation)
+    * [Deploy the namespace](#deploy-the-namespace)
+  * [Change the namespace](#change-the-namespace)
+  * [Delete the deployment:](#delete-the-deployment)
+  * [Monitoring](#monitoring)
+* [Troubleshooting](#troubleshooting)
+<!-- TOC -->
+
 ## Description
 
 This repo contains:
@@ -8,14 +28,21 @@ This repo contains:
 
 ## Pre-Requisites
 
-| Pre-Requisites         |     Version     | Description                                                                                                                                     |
-| ---------------------- |     :-----:     | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| DNS sub-domain name    |       N/A       | This domain will be used to address all services of the agent. <br/> example: `*.dataconsumer01.int.simpl-europe.eu`                            |  
-| Kubernetes Cluster     | 1.29.x or newer | Other version *might* work but tests were performed using 1.29.x version                                                                        |
-| nginx-ingress          | 1.10.x or newer | Used as ingress controller. <br/> Other version *might* work but tests were performed using 1.10.x version. <br/> Image used: `registry.k8s.io/ingress-nginx/controller:v1.10.0`  |
-| cert-manager           | 1.15.x or newer | Used for automatic cert management. <br/> Other version *might* work but tests were performed using 1.15.x version. <br/> Image used: `quay.io/jetstack/cert-manager-controller::v1.15.3` |
-| Hashicorp Vault        | 1.17.x or newer | Other version *might* work but tests were performed using 1.17.x version. <br/> Image used: `hashicorp/vault:1.17.2`                            |
-| argocd                 | 2.11.x or newer | Used as GitOps tool . App of apps concept. <br/> Other version *might* work but tests were performed using 2.11.x version. <br/> Image used: `quay.io/argoproj/argocd:v2.11.3` |
+### Onboarding
+
+Prior to the installation of the consumer agent, make sure to follow the onboarding steps for a data space participant.
+
+[Onboarding a Participant](https://code.europa.eu/simpl/simpl-open/development/iaa/charts/-/blob/develop/doc/0.7.x/ONBOARD.md?ref_type=heads#onboarding-a-participant)
+
+### Tools
+| Pre-Requisites      |     Version     | Description                                                                                                                                                                               |
+|---------------------|:---------------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DNS sub-domain name |       N/A       | This domain will be used to address all services of the agent. <br/> example: `*.dataconsumer01.int.simpl-europe.eu`                                                                      |  
+| Kubernetes Cluster  | 1.29.x or newer | Other version *might* work but tests were performed using 1.29.x version                                                                                                                  |
+| nginx-ingress       | 1.10.x or newer | Used as ingress controller. <br/> Other version *might* work but tests were performed using 1.10.x version. <br/> Image used: `registry.k8s.io/ingress-nginx/controller:v1.10.0`          |
+| cert-manager        | 1.15.x or newer | Used for automatic cert management. <br/> Other version *might* work but tests were performed using 1.15.x version. <br/> Image used: `quay.io/jetstack/cert-manager-controller::v1.15.3` |
+| Hashicorp Vault     | 1.17.x or newer | Other version *might* work but tests were performed using 1.17.x version. <br/> Image used: `hashicorp/vault:1.17.2`                                                                      |
+| argocd              | 2.11.x or newer | Used as GitOps tool . App of apps concept. <br/> Other version *might* work but tests were performed using 2.11.x version. <br/> Image used: `quay.io/argoproj/argocd:v2.11.3`            |
 
 ## Installation
 
@@ -31,14 +58,6 @@ To ensure that the namespace was created successfully, run the following command
 
 `kubectl get namespaces`
 <br/>This will list all the namespaces in your cluster, and you should see the one you just created listed.
-
-#### Create volumes
-
-Two volumes needs to be created manually at the moment:
-* nfs-storage-pvc-xsfc
-* nfs-storage-pvc-sdapibe
-
-This will be fixed in future versions.
 
 ### Deployment using ArgoCD
 

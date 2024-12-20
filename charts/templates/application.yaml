@@ -27,6 +27,9 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.postgresql.nameOverride }}
+        {{- if .Values.postgresql.primary }}
+        primary: {{- toYaml .Values.postgresql.primary | nindent 10 }}
+        {{- end }}
   - repoURL: {{ .Values.keycloak.repo_URL }}
     targetRevision: {{ .Values.keycloak.targetRevision }}
     chart: {{ .Values.keycloak.chart_name }}
@@ -39,7 +42,7 @@ spec:
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
         apiUrl: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
         externalDatabase:
-          host: "postgresql.{{ .Release.Namespace }}.svc.cluster.local"
+          host: "postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local"
         extraEnvVars:
         - name: KC_HOSTNAME_ADMIN
           value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
@@ -53,6 +56,35 @@ spec:
           value: "participant"
         - name: KEYCLOAK_EXTRA_ARGS
           value: --import-realm
+        {{- if .Values.keycloak.resourcesPreset }}
+        resourcesPreset: {{ .Values.keycloak.resourcesPreset }}
+        {{- end }}
+        {{- if .Values.keycloak.resources }}
+        resources: {{- toYaml .Values.keycloak.resources | nindent 10 }}
+        {{- end }}
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.xsfc_advsearch_be.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.xsfc_advsearch_be.targetRevision }}
+    chart: {{ .Values.xsfc_advsearch_be.chart_name }}
+    helm:
+      valueFiles:
+        {{- range .Values.xsfc_advsearch_be.valueFiles }}
+        - $values/app-values/xsfc-advsearch-be/{{ . }}
+        {{- end }}
+      values: |
+        domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        usersRoles:
+          apiUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+        catalogueAdapter:
+          tier2Gateway:
+            uri: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+        federatedCatalogue:
+          tier2Gateway:
+            uri: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+        participant:
+          onboarding:
+            authorityTLSUri: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+      releaseName: {{ .Values.xsfc_advsearch_be.nameOverride }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_catalogue_client.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.simpl_catalogue_client.targetRevision }}
@@ -64,14 +96,11 @@ spec:
         {{- end }}
       values: |
         env:
-          AUTH_KEYCLOAK_ID: "{{ .Values.authority.keycloakClientID }}"
-          AUTH_KEYCLOAK_ISSUER: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}/auth/realms/authority/"
-          AUTH_KEYCLOAK_SECRET: "{{ .Values.authority.keycloakSecret }}"
-          PUBLIC_FC_DATA_URL: "https://xsfc-data-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_FC_INFRA_URL: "https://xsfc-infra-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_DATA_ADAPTER_URL: "https://adapter.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_INFRA_ADAPTER_URL: "https://adapter.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_CREATION_WIZARD_API_URL: "https://creation-wizard-api.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+          PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+          PUBLIC_AUTH_KEYCLOAK_REALM: "participant"
+          PUBLIC_AUTH_KEYCLOAK_CLIENT_ID: "frontend-cli"
+          PUBLIC_FC_DATA_URL: "https://xsfc-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+          PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/xsfc-advsearch-be"
         ingress:
           hosts:
             - host: catalogue-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
@@ -82,6 +111,9 @@ spec:
             - secretName: catalogue-ui-tld-secret
               hosts:
                 - catalogue-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        {{- if .Values.simpl_catalogue_client.resources }}
+        resources: {{- toYaml .Values.simpl_catalogue_client.resources | nindent 10 }}
+        {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cloud_gateway.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.simpl_cloud_gateway.targetRevision }}
@@ -92,15 +124,53 @@ spec:
         - $values/app-values/Simpl-Cloud-Gateway/{{ . }}
         {{- end }}
       values: |
-        microservices:
-          usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
-          keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
         global:
           hostBe: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-          hostTls: tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
+          hostTls: tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
           authorityUrl: https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
           cors:
             allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+        keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
+        usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+        authenticationProviderUrl: http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+        appConfig:
+          spring:
+            cloud:
+              gateway:
+                routes:
+                  - id: keycloak
+                    uri: ${keycloak.url}
+                    predicates:
+                      - Path=/auth/**
+                    filters:
+                      - StripPrefix=1
+                  - id: users-roles
+                    uri: ${users-roles.url}
+                    predicates:
+                      - Path=/user-api/**
+                    filters:
+                      - StripPrefix=1
+                  - id: authentication-provider
+                    uri: ${authentication-provider.url}
+                    predicates:
+                      - Path=/auth-api/**
+                    filters:
+                      - StripPrefix=1
+                  - id: contract-consumption-be
+                    uri: http://contract-consumption-be.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+                    predicates:
+                      - Path=/contract-consumption/**
+                    filters:
+                      - StripPrefix=1
+                  - id: xsfc-advsearch-be
+                    uri: http://xsfc-advsearch-be.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+                    predicates:
+                      - Path=/xsfc-advsearch-be/**
+                    filters:
+                      - StripPrefix=1
+        {{- if .Values.simpl_cloud_gateway.resources }}
+        resources: {{- toYaml .Values.simpl_cloud_gateway.resources | nindent 10 }}
+        {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.users_roles.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.users_roles.targetRevision }}
@@ -118,6 +188,11 @@ spec:
           url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/usersroles"
         redis:
           host: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
+        microservices:
+          authenticationProviderUrl: http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+        {{- if .Values.users_roles.resources }}
+        resources: {{- toYaml .Values.users_roles.resources | nindent 10 }}
+        {{- end }}
   - repoURL: {{ .Values.redis.repo_URL }}
     targetRevision: {{ .Values.redis.targetRevision }}
     chart: {{ .Values.redis.chart_name }}
@@ -128,6 +203,9 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.redis.nameOverride }}
+        {{- if .Values.redis.master }}
+        master: {{- toYaml .Values.redis.master | nindent 10 }}
+        {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_fe.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.simpl_fe.targetRevision }}
@@ -140,7 +218,7 @@ spec:
       values: |
         hostFe: participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
         cors:
-          allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:4203,http://localhost:3000
+          allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:4203,http://localhost:3000
         env:
         - name: API_URL
           value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
@@ -150,6 +228,9 @@ spec:
           value: "participant"
         - name: KEYCLOAK_CLIENT_ID
           value: "frontend-cli"
+        {{- if .Values.simpl_fe.resources }}
+        resources: {{- toYaml .Values.simpl_fe.resources | nindent 10 }}
+        {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.tls_gateway.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.tls_gateway.targetRevision }}
@@ -160,27 +241,41 @@ spec:
         - $values/app-values/tls-gateway/{{ . }}
         {{- end }}
       values: |
-        microservices:
-          usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
-          keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
         global:
           cors:
             allowOrigin: https://authority.fe.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+        microservices:
+          usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+          keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
+          authenticationProviderUrl: http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         redis:
           host: "redis-master.{{ .Release.Namespace }}.svc.cluster.local"
         hostT2: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
         authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-  {{- if .Values.monitoring.enabled }}
-  - repoURL: {{ .Values.monitoring.operator.repo_URL }}
-    targetRevision: {{ .Values.monitoring.operator.targetRevision }}
-    chart: {{ .Values.monitoring.operator.chart_name }}
+        {{- if .Values.tls_gateway.resources }}
+        resources: {{- toYaml .Values.tls_gateway.resources | nindent 10 }}
+        {{- end }}
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.auth_provider.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.auth_provider.targetRevision }}
+    chart: {{ .Values.auth_provider.chart_name }}
     helm:
       valueFiles:
-        {{- range .Values.monitoring.operator.valueFiles }}
-        - $values/app-values/monitoring-operator/{{ . }}
+        {{- range .Values.auth_provider.valueFiles }}
+        - $values/app-values/auth-provider/{{ . }}
         {{- end }}
       values: |
-        managedNamespaces: [{{ .Values.cluster.namespace }}]
+        db:
+          url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/authenticationprovider"
+        microservices:
+          usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+        simpl:
+          certificate:
+            san: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+        {{- if .Values.auth_provider.resources }}
+        resources: {{- toYaml .Values.auth_provider.resources | nindent 10 }}
+        {{- end }}
+  {{- if .Values.monitoring.enabled }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.monitoring.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.monitoring.targetRevision }}
@@ -194,8 +289,7 @@ spec:
       values: |
         domainSuffix: {{ .Values.domainSuffix }}
         namespaceTag: {{ .Values.namespaceTag }}
-        metricbeat:
-          kubeStateHost: {{ .Values.cluster.kubeStateHost }}
+        mainNamespace: {{ .Values.cluster.commonToolsNamespace }}
         heartbeat:
           services:
             heartbeat.monitors:

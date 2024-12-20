@@ -1,87 +1,137 @@
 # Spring Cloud Gateway Routes Participant
-springRoutes: 
-  - id: keycloak
-    uri: ${keycloak.url}
-    predicates:
-      - Path=/auth/**
-    filters:
-      - StripPrefix=1
-  - id: users-roles
-    uri: ${users-roles.url}
-    predicates:
-      - Path=/*/user-api/**
-    filters:
-      - StripPrefix=2
+appConfig:
+  spring:
+    cloud:
+      gateway:
+        routes: 
+          - id: keycloak
+            uri: ${keycloak.url}
+            predicates:
+              - Path=/auth/**
+            filters:
+              - StripPrefix=1
+          - id: users-roles
+            uri: ${users-roles.url}
+            predicates:
+              - Path=/user-api/**
+            filters:
+              - StripPrefix=1
+          - id: authentication-provider
+            uri: ${authentication-provider.url}
+            predicates:
+              - Path=/auth-api/**
+            filters:
+              - StripPrefix=1
+  springdoc:
+    swagger-ui:
+      urls:
+        - url: /user-api/v3/api-docs
+          name: Users & Roles Service
+        - url: /auth-api/v3/api-docs
+          name: Authentication Provider Service
 
-swaggerUrls:
-  - url: /public/user-api/v3/api-docs
-    name: Users & Roles Service
+  routes:
+    public-urls:
+      - method: GET
+        path: "/swagger-ui.html"
+      - method: GET
+        path: "/swagger-ui/**"
+      - method: GET
+        path: "/v3/api-docs/**"
+      - method: GET
+        path: "/actuator/**"
 
-routes:
-  publicUrls:
-    - method: GET
-      path: "/swagger-ui.html"
-    - method: GET
-      path: "/swagger-ui/**"
-    - method: GET
-      path: "/v3/api-docs/**"
-    - method: GET
-      path: "/actuator/**"
+    denied-urls:
+      - method: GET
+        path: "/auth-api/keypair"
 
-  rbac:
-    - path: "private/user-api/agent/identity-attributes"
-      method: GET
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/agent/identity-attributes/*"
-      method: GET
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/identity-attribute/search"
-      method: GET
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/role/*"
-      method: GET
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/role"
-      method: PUT
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/role/*/identity-attributes"
-      method: POST
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/role/delete-attribute"
-      method: DELETE
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/role/*"
-      method: DELETE
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/role/search"
-      method: GET
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/role/*/duplicate-identity-attribute"
-      method: POST
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/user/as-t1user"
-      method: POST
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/user/*"
-      method: GET
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/user/*"
-      method: PUT
-      roles:
-        - T1UAR_M
-    - path: "private/user-api/user/*"
-      method: DELETE
-      roles:
-        - T1UAR_M
+    rbac:
+      - path: "/xsfc-advsearch-be/**"
+        method: GET
+        roles:
+          - SD_PUBLISHER
+          - SD_CONSUMER
+      - path: "/xsfc-advsearch-be/**"
+        method: POST
+        roles:
+          - SD_PUBLISHER
+          - SD_CONSUMER
+      - path: "/contract-consumption/**"
+        method: GET
+        roles:
+          - SD_CONSUMER
+      - path: "/contract-consumption/**"
+        method: POST
+        roles:
+          - SD_CONSUMER
+      - path: "/user-api/agent/identity-attributes"
+        method: GET
+        roles:
+          - T1UAR_M
+      - path: "/user-api/agent/identity-attributes/*"
+        method: GET
+        roles:
+          - T1UAR_M
+      - path: "/user-api/identity-attribute/search"
+        method: GET
+        roles:
+          - T1UAR_M
+      - path: "/user-api/role/*"
+        method: GET
+        roles:
+          - T1UAR_M
+      - path: "/user-api/role"
+        method: PUT
+        roles:
+          - T1UAR_M
+      - path: "/user-api/role/*/identity-attributes"
+        method: POST
+        roles:
+          - T1UAR_M
+      - path: "/user-api/role/delete-attribute"
+        method: DELETE
+        roles:
+          - T1UAR_M
+      - path: "/user-api/role/*"
+        method: DELETE
+        roles:
+          - T1UAR_M
+      - path: "/user-api/role/search"
+        method: GET
+        roles:
+          - T1UAR_M
+      - path: "/user-api/role/*/duplicate-identity-attribute"
+        method: POST
+        roles:
+          - T1UAR_M
+      - path: "/user-api/user/as-t1user"
+        method: POST
+        roles:
+          - T1UAR_M
+      - path: "/user-api/user/**"
+        method: GET
+        roles:
+          - T1UAR_M
+      - path: "/user-api/user/**"
+        method: PUT
+        roles:
+          - T1UAR_M
+      - path: "/user-api/user/*"
+        method: DELETE
+        roles:
+          - T1UAR_M
+      - method: POST
+        path: "/auth-api/keypair/import"
+        roles:
+          - ONBOARDER_M 
+      - path: "/auth-api/keypair/**"
+        roles:
+          - ONBOARDER_M 
+      - method: POST
+        path: "/auth-api/csr/generate"
+        roles:
+          - ONBOARDER_M 
+      - path: "/auth-api/keypair"
+        method: HEAD
+        roles:
+          - ONBOARDER_M

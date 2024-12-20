@@ -1,0 +1,35 @@
+deployment:
+  containerApiPort: 29191
+  containerControlPort: 29192
+  containerManagementPort: 29193
+  containerProtocolPort: 29194
+  containerPublicPort: 29291
+  label: consumer
+  include:
+    postgres: false
+
+service:
+  apiPort: 29191
+  controlPort: 29192
+  managementPort: 29193
+  protocolPort: 29194
+  publicPort: 29291
+
+ingress:
+  tlsSecretName: edc-simpl-backend-tls
+
+# it would be better to move those to vault in the future or use sops encryption
+env:
+  edcParticipantId: "consumer"
+  edcIdsId: "urn:connector:consumer"
+
+postgresql:
+  fullnameOverride: postgresql
+  username: "edc"
+  password: "edc"
+
+tls:
+  keystore:
+    type: PKCS12
+    password: keystore-generated-password
+    path: http://users-roles:8080/credential/download

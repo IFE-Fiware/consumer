@@ -1,0 +1,19 @@
+deployment:
+  vault:
+    secretPath: /v1/edc
+    timeout: 30
+  include:
+    postgres: false
+
+ingress:
+  enabled: true
+  apiPath: /api
+  managementPath: /management
+  protocolPath: /protocol
+  publicPath: /public
+  controlPath: /control
+
+# it would be better to move those to vault in the future or use sops encryption
+env:
+  edcApiAuthKey: "password"
+  vaultToken: "aHZzLkg4TXdJOEhxVFdrNTBvT01ZUkpPV0I1Vw=="

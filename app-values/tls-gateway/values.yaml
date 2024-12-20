@@ -94,13 +94,7 @@ tolerations: []
 affinity: {}
 
 # Spring Cloud Gateway Routes
-springRoutes:
-  - id: users-roles
-    uri: ${users-roles.url}
-    predicates:
-      - Path=/user-api/mtls/**
-    filters:
-      - StripPrefix=1
+springRoutes: {}
 
 
 # Custom Attribute Based Access Control
@@ -123,10 +117,6 @@ routes: {}
 # Springdoc Swagger-UI
 swaggerUrls: []
 
-ssl:
-  keystore:
-    password: "authority"
-
 global:
   profile: participant
 
@@ -134,3 +124,6 @@ redis:
   port: "6379"
   username: "default"
   password: "admin"
+
+keypair:
+  algorithm: EC

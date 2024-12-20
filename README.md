@@ -70,115 +70,91 @@ When you create it, you set up the values below (example values)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: 'consumer01-deployer'                            # name of the deploying app in argocd
+  name: 'consumer01-deployer'           # name of the deploying app in argocd
 spec:
   project: default
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 0.3.1
+    targetRevision: 1.0.0                   # version of package
     helm:
       values: |
         values:
-          branch: develop                                 # branch of repo with values - this is develop by default
-        secretEngine: dev-int                             # container for your secrets in vault
+          branch: v1.0.0                    # branch of repo with values - for released version it should be the release branch
         project: default
-        namespaceTag: consumer01                          # identifier of deployment and part of fqdn
-        domainSuffix: int.simpl-europe.eu                 # last part of fqdn
+        namespaceTag: consumer01            # identifier of deployment and part of fqdn
+        domainSuffix: int.simpl-europe.eu   # last part of fqdn
         argocd:
-          appname: consumer01-iaa                         # name of generated argocd app 
-          namespace: argocd                               # namespace of your argocd
+          appname: consumer01               # name of generated argocd app 
+          namespace: argocd                 # namespace of your argocd
         cluster:
           address: https://kubernetes.default.svc
-          namespace: consumer01-iaa                       # where the app will be deployed
-          kubeStateHost: kube-prometheus-stack-kube-state-metrics.devsecopstools.svc.cluster.local:8080    # link to kube-state-metrics svc
+          namespace: consumer01             # where the app will be deployed
+          commonToolsNamespace: common      # namespace where main monitoring stack is deployed
         authority:
-          keycloakClientID: federated-catalogue           # name of the client in authority keycloak
-          keycloakSecret: clientsecretfromkeycloak        # secret of that client (from its credentials)
-          namespaceTag: authority1                        # namespace tag of target authority
-        monitoring:
-          enabled: true                                   # "true" enables the deployment of ELK stack for monitoring
+          namespaceTag: authority1          # namespace tag of target authority
     chart: consumer
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: consumer01-iaa                             # where the package will be deployed
+    namespace: consumer01                   # where the package will be deployed
 ```
 
 ### Manual deployment
 
 #### Files preparation
 
-The suggested way for deployment, is to unpack the released package to a folder on a host where you have kubectl and helm available and configured. 
+Another way for deployment, is to unpack the released package to a folder on a host where you have kubectl and helm available and configured. 
 
 There is basically one file that you need to modify - values.yaml. 
 There are a couple of variables you need to replace - described below. The rest you don't need to change.
 
 ```
+project: default                   # Project to which the namespace is attached
+namespaceTag: consumer01           # identifier of deployment and part of fqdn
 authority:
-  namespaceTag: authority1                        # namespace tag of target authority
-  keycloakClientID: federated-catalogue           # name of the client in authority keycloak
-  keycloakSecret: clientsecretfromkeycloak        # secret of that client (from its credentials)
+  namespaceTag: authority1         # namespace tag of target authority 
+domainSuffix: int.simpl-europe.eu  # last part of fqdn
 
 argocd:
-  appname: consumer01-iaa                         # name of generated argocd app 
-  namespace: argocd                               # namespace of your argocd
-
-project: default                                  # Project to which the namespace is attached
+  appname: consumer01              # name of generated argocd app 
+  namespace: argocd                # namespace of your argocd
 
 cluster:
   address: https://kubernetes.default.svc
-  namespace: consumer01-iaa                       # where the package will be deployed
-  kubeStateHost: kube-prometheus-stack-kube-state-metrics.devsecopstools.svc.cluster.local:8080    # link to kube-state-metrics svc
+  namespace: consumer01            # where the package will be deployed
+  commonToolsNamespace: common     # namespace where main monitoring stack is deployed
 
-namespaceTag: consumer01                          # identifier of deployment and part of fqdn
-domainSuffix: int.simpl-europe.eu                 # last part of fqdn
 
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
   branch: develop                                                                    # branch of code in repo
 ```
 
-### Deploy the namespace
-Deploying a dedicated namespace, such as **consumer**, helps isolate resources and applications within a Kubernetes cluster.
+##### Deployment
 
-Filling the namespace with content requires the following activity:
+After you have prepared the values file, you can start the deployment. 
+Use the command prompt. Proceed to the folder where you have the Chart.yaml file and execute the following command. The dot at the end is crucial - it points to current folder to look for the chart. 
 
-Go to master charts directory:
-
-`cd .\charts\`
-
-Now you can deploy the namespace:
+Now you can deploy the agent:
 
 `helm install consumer . `
 
+## Additional steps
+
 :rotating_light: :rotating_light: :rotating_light: **Attention!!!** :rotating_light: :rotating_light: :rotating_light: <br>
-<b><i>After installing the namespace, there are services that connect using the TLS protocol (e.g. EJBCA). In the current phase of application development, this element must be configured manually.
-The entire procedure is described in confuence:</i></b>
+<b><i>After installing the agent, you need to get through the onboarding process. 
+The entire procedure is described in the code repository:</i></b>
 
-https://confluence.simplprogramme.eu/display/SIMPL/EJBCA+Configuration
+https://code.europa.eu/simpl/simpl-open/development/iaa/charts/-/blob/develop/doc/0.8.x/ONBOARD.md?ref_type=heads
 
-<b><i>For the namespace consumer to work correctly, it is necessary to perform the actions described in the link above.</i></b>
+### Monitoring
 
-## Change the namespace
-
-The process of implementing changes is analogous to deploying the namespace for the first time:
-
-`helm upgrade consumer . `
-
-## Delete the deployment:
-
-`helm uninstall consumer .` 
-
-## Monitoring
-
-ELK stack for monitoring is added with this release.  
-Its deployment can be disabled by switch the value monitoring.enabled to false.  
-When it's enabled, after the stack is deployed, you can access the ELK stack UI by https://kibana.**namespacetag**.**domainsuffix**  
-Default user is "elastic", its password can be extracted by kubectl command. `kubectl get secret elastic-elasticsearch-es-elastic-user -o go-template='{{.data.elastic | base64decode}}' -n {namespace}`
+Filebeat components for monitoring are included in this release.   
+Their deployment can be disabled by switching the value monitoring.enabled to false.
 
 # Troubleshooting
 If you encounter issues during deployment, check the following:
 
 - Ensure that ArgoCD is properly set up and running.
-- Verify that the test01 namespace exists in your Kubernetes cluster.
+- Verify that the namespace exists in your Kubernetes cluster.
 - Check the ArgoCD application logs and Helm error messages for specific issues.

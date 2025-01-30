@@ -59,7 +59,83 @@ To ensure that the namespace was created successfully, run the following command
 `kubectl get namespaces`
 <br/>This will list all the namespaces in your cluster, and you should see the one you just created listed.
 
-### Deployment using ArgoCD
+#### Vault related tasks
+
+##### Secret engine for Signer
+
+Go to Vault UI and define new transit secret engine with path `transit/simpl` create encryption key `gaia-x-key1` with type `ed25519`.
+
+##### Secret for Contract
+
+One secret is needed, its naming syntax is "{{ .Release.Namespace }}-contract", it should be created in created before kv secret engine.
+Its content is:
+
+```
+{
+  "API_KEY": "apikey",
+  "DBPASSWORD": "contract",
+  "DB_URL": "jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/contract",
+  "DB_USER": "contract",
+  "KAFKA_CLIENT_PASSWORDS": "contract"
+}
+```
+
+Where you need to modify:
+
+| Variable name                 |     Example         | Description     |
+| ----------------------        |     :-----:         | --------------- |
+| DB_USER            | contract | User for contract database |
+| DBPASSWORD         | contract | Password for contract database  |
+| DB_URL             | jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/contract | Link to datasource |
+| KAFKA_CLIENT_PASSWORDS  | password | Password for kafka connection |
+
+##### Secret for Infrastructure-BE
+
+One secret is needed, its name is "infrastructure-be", it should be created in created before kv secret engine.
+Its content is:
+
+```
+{
+  "kafka.sasl.enabled": true,
+  "spring.datasource.password": "infrabe",
+  "spring.datasource.url": "jdbc:postgresql://postgres.dataprovider03.svc.cluster.local:5432/infrabe",
+  "spring.datasource.username": "infrabe",
+  "spring.flyway.password": "infrabe",
+  "spring.flyway.url": "jdbc:postgresql://postgresql.dataprovider03.svc.cluster.local:5432/infrabe",
+  "spring.flyway.user": "infrabe",
+  "spring.kafka.bootstrap-servers": "kafka.common03.svc.cluster.local:9092",
+  "spring.mail.password": "pass",
+  "spring.mail.username": "user"
+}
+```
+
+| Variable name                |     Example         | Description     |
+| ----------------------       |     :-----:         | --------------- |
+| kafka.sasl.enabled           | true | If kafka authentication is enabled |
+| spring.datasource.password   | infrabe | Password for infrabe database  |
+| spring.datasource.url        | jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/infrabe | Link to datasource |
+| spring.datasource.username   | infrabe | Username for infrabe database |
+| spring.flyway.password   | infrabe | Password for infrabe database  |
+| spring.flyway.url        | jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/infrabe | Link to datasource |
+| spring.flyway.user   | infrabe | Username for infrabe database |
+| spring.kafka.bootstrap-servers   | kafka.common03.svc.cluster.local:9092 | Link to kafka bootstrap service  |
+| spring.mail.password        | password | Password to ionos smtp |
+| spring.mail.username   | infrabe | Username to ionos smtp |
+
+##### Secret engine for EDC
+
+A new KV v2 secret engine is needed for EDC. It should be named "edc". 
+You need to create 5 secrets in it, their names are as below (example in brackets - "content" is the key name, value is after the colon)
+
+- edc.ionos.access.key (content: suppliedstring)
+- edc.ionos.endpoint (content: s3 server url)
+- edc.ionos.endpoint.region (content: two letter country code)
+- edc.ionos.secret.key (content: secretkeystring)
+- edc.ionos.token (content: tokenstring)
+
+### Deployment
+
+#### Deployment using ArgoCD
 
 You can easily deploy the agent using ArgoCD. All the values mentioned in the sections below you can input in ArgoCD deployment. The repoURL gets the package directly from code.europa.eu.
 targetRevision is the package version. 
@@ -76,11 +152,11 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 1.0.0                   # version of package
+    targetRevision: 1.1.0                   # version of package
     helm:
       values: |
         values:
-          branch: v1.0.0                    # branch of repo with values - for released version it should be the release branch
+          branch: v1.1.0                    # branch of repo with values - for released version it should be the release branch
         project: default
         namespaceTag: consumer01            # identifier of deployment and part of fqdn
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
@@ -93,15 +169,19 @@ spec:
           commonToolsNamespace: common      # namespace where main monitoring stack is deployed
         authority:
           namespaceTag: authority1          # namespace tag of target authority
+        hashicorp:
+          token: "aHZzLnFPSHdxbTdnWnV1eDlZZEllYzY4bkt3Uw=="  # token to access the vault base64 encoded
+          service: "http://vault-common03.common03.svc.cluster.local:8200"  # local service path to your vault
+          secretEngine: dev-int             # secret engine name created in vault
     chart: consumer
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: consumer01                   # where the package will be deployed
 ```
 
-### Manual deployment
+#### Manual deployment
 
-#### Files preparation
+##### Files preparation
 
 Another way for deployment, is to unpack the released package to a folder on a host where you have kubectl and helm available and configured. 
 
@@ -124,6 +204,10 @@ cluster:
   namespace: consumer01            # where the package will be deployed
   commonToolsNamespace: common     # namespace where main monitoring stack is deployed
 
+hashicorp:
+  token: "aHZzLnFPSHdxbTdnWnV1eDlZZEllYzY4bkt3Uw=="  # token to access the vault base64 encoded
+  service: "http://vault-common03.common03.svc.cluster.local:8200"  # local service path to your vault
+  secretEngine: dev-int             # secret engine name created in vault
 
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL

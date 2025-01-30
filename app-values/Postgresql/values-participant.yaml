@@ -10,3 +10,5 @@ primary:
         CREATE DATABASE authenticationprovider OWNER authenticationprovider;
         CREATE USER edc WITH PASSWORD 'edc' CREATEDB;
         CREATE DATABASE edc OWNER edc;
+        CREATE USER contract WITH PASSWORD 'contract' CREATEDB;
+        CREATE DATABASE contract OWNER contract;

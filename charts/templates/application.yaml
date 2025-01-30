@@ -72,6 +72,8 @@ spec:
         - $values/app-values/xsfc-advsearch-be/{{ . }}
         {{- end }}
       values: |
+        image:
+          repository: "code.europa.eu:4567/simpl/simpl-open/development/data1/xsfc-advsearch-be:{{ .Values.xsfc_advsearch_be.targetRevision }}"
         domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
         usersRoles:
           apiUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
@@ -97,10 +99,9 @@ spec:
       values: |
         env:
           PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_AUTH_KEYCLOAK_REALM: "participant"
-          PUBLIC_AUTH_KEYCLOAK_CLIENT_ID: "frontend-cli"
           PUBLIC_FC_DATA_URL: "https://xsfc-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
           PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/xsfc-advsearch-be"
+          PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/contract-consumption"
         ingress:
           hosts:
             - host: catalogue-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
@@ -166,6 +167,12 @@ spec:
                     uri: http://xsfc-advsearch-be.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
                     predicates:
                       - Path=/xsfc-advsearch-be/**
+                    filters:
+                      - StripPrefix=1
+                  - id: contract-consumption-be
+                    uri: http://contract-consumption-be.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+                    predicates:
+                      - Path=/contract-consumption/**
                     filters:
                       - StripPrefix=1
         {{- if .Values.simpl_cloud_gateway.resources }}
@@ -252,6 +259,23 @@ spec:
           host: "redis-master.{{ .Release.Namespace }}.svc.cluster.local"
         hostT2: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
         authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+        appConfig:
+          spring:
+            cloud:
+              gateway:
+                routes:
+                  - id: edc
+                    uri: http://simpl-edc-service.{{ .Values.cluster.namespace }}.svc.cluster.local:29194
+                    predicates:
+                      - Path=/edc/**
+                    filters:
+                      - StripPrefix=1
+                  - id: user-roles
+                    uri: ${users-roles.url}
+                    predicates:
+                      - Path=/user-api/mtls/**
+                    filters:
+                      - StripPrefix=1
         {{- if .Values.tls_gateway.resources }}
         resources: {{- toYaml .Values.tls_gateway.resources | nindent 10 }}
         {{- end }}
@@ -274,6 +298,36 @@ spec:
             san: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
         {{- if .Values.auth_provider.resources }}
         resources: {{- toYaml .Values.auth_provider.resources | nindent 10 }}
+        {{- end }}
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_edc.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.simpl_edc.targetRevision }}
+    chart: {{ .Values.simpl_edc.chart_name }}
+    helm:
+      releaseName: {{ .Values.simpl_edc.nameOverride }}
+      valueFiles:
+        {{- range .Values.simpl_edc.valueFiles }}
+        - $values/app-values/simpl-edc/{{ . }}
+        {{- end }}
+      values: |
+        ingress:
+          host: edc.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        deployment:
+          vault:
+            url: {{ .Values.hashicorp.service }}
+          callbackAddress: "https://tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/edc"
+        env:
+          vaultToken: {{ .Values.hashicorp.token }}
+        postgresql:
+          url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/edc"
+          policyUrl: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/edc"
+        tls:
+          url:
+            authority: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+            usersRoles: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/credential/download"
+            authenticationProvider: "http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/keypair"
+        {{- if .Values.simpl_edc.resources }}
+        resources: {{- toYaml .Values.simpl_edc.resources | nindent 10 }}
         {{- end }}
   {{- if .Values.monitoring.enabled }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.monitoring.projectID }}/packages/helm/stable"
@@ -309,3 +363,53 @@ spec:
               hosts: ["elastic-kibana-kb-http.{{ .Values.cluster.namespace }}.svc"]
               schedule: '*/5 * * * * * *'
   {{- end }}
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.contract.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.contract.targetRevision }}
+    chart: {{ .Values.contract.chart_name }}
+    helm:
+      releaseName: {{ .Values.contract.nameOverride }}
+      valueFiles:
+        {{- range .Values.contract.valueFiles }}
+        - $values/app-values/contract/{{ . }}
+        {{- end }}
+      values: |
+        deployment:
+          db:
+            url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/contract"
+          kafka:
+            bootstrapServer: http://kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
+          vault:
+            hashicorp:
+              service: {{ .Values.hashicorp.service }}
+              secretEngine: {{ .Values.hashicorp.secretEngine }}
+              role: {{ .Values.hashicorp.role }}
+          {{- if .Values.contract.resources }}
+          resources: {{- toYaml .Values.contract.resources | nindent 10 }}
+          {{- end }} 
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.stubs.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.stubs.targetRevision }}
+    chart: {{ .Values.stubs.chart_name }}
+    helm:
+      valueFiles:
+        {{- range .Values.stubs.valueFiles }}
+        - $values/app-values/stubs/{{ . }}
+        {{- end }}
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.contract_consumption_be.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.contract_consumption_be.targetRevision }}
+    chart: {{ .Values.contract_consumption_be.chart_name }}
+    helm:
+      valueFiles:
+        {{- range .Values.contract_consumption_be.valueFiles }}
+        - $values/app-values/contract-consumption-be/{{ . }}
+        {{- end }}
+      values: |
+        domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        edcConsumer:
+          baseUrl: http://simpl-edc-service.{{ .Values.namespaceTag }}.svc.cluster.local:29193
+        {{- if .Values.contract_consumption_be.resources }}
+        resources: {{- toYaml .Values.contract_consumption_be.resources | nindent 10 }}
+        {{- end }}
+      releaseName: {{ .Values.contract_consumption_be.nameOverride }}

@@ -15,5 +15,11 @@ ingress:
 
 # it would be better to move those to vault in the future or use sops encryption
 env:
-  edcApiAuthKey: "password"
-  vaultToken: "aHZzLkg4TXdJOEhxVFdrNTBvT01ZUkpPV0I1Vw=="
+  edcParticipantId: ""
+  edcIdsId: ""
+
+contractmanager:
+  extension:
+    enabled: true
+  apikey: apikey
+  url: http://contract-consumer:8080/contract/v1

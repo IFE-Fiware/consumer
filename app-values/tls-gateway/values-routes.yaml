@@ -13,6 +13,10 @@ appConfig:
   public-urls:
     - method: GET
       path: "/actuator/**"
+    - method: GET
+      path: "/edc/**"
+    - method: POST
+      path: "/edc/**"
   abac:
     - method: POST
       path: "/user-api/mtls/ephemeral-proof"

@@ -19,3 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic service usage contract set-up with a Data provider DataSpace participant, after request by the Consumer of the selected service offering from the central catalogue, including functionality available in the UI
 - Consumer access to a contracted dataset (direct download) via notification
 - Consumer access to a contracted VM infrastructure + dataset bundle (indirect access) via email notification
+

@@ -10,13 +10,15 @@
     * [Prerequisites](#prerequisites)
       * [Create the Namespace](#create-the-namespace)
       * [Verify the Namespace](#verify-the-namespace)
-    * [Deployment using ArgoCD](#deployment-using-argocd)
-    * [Manual deployment](#manual-deployment)
-      * [Files preparation](#files-preparation)
+      * [Vault related tasks](#vault-related-tasks)
+    * [Deployment](#deployment)
+      * [Deployment using ArgoCD](#deployment-using-argocd)
+      * [Manual deployment](#manual-deployment)
+        * [Files preparation](#files-preparation)
+        * [Deployment](#deployment)
     * [Deploy the namespace](#deploy-the-namespace)
-  * [Change the namespace](#change-the-namespace)
-  * [Delete the deployment:](#delete-the-deployment)
-  * [Monitoring](#monitoring)
+  * [Additional steps](#additional-steps)
+    * [Monitoring](#monitoring)
 * [Troubleshooting](#troubleshooting)
 <!-- TOC -->
 
@@ -88,39 +90,6 @@ Where you need to modify:
 | DBPASSWORD         | contract | Password for contract database  |
 | DB_URL             | jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/contract | Link to datasource |
 | KAFKA_CLIENT_PASSWORDS  | password | Password for kafka connection |
-
-##### Secret for Infrastructure-BE
-
-One secret is needed, its name is "infrastructure-be", it should be created in created before kv secret engine.
-Its content is:
-
-```
-{
-  "kafka.sasl.enabled": true,
-  "spring.datasource.password": "infrabe",
-  "spring.datasource.url": "jdbc:postgresql://postgres.dataprovider03.svc.cluster.local:5432/infrabe",
-  "spring.datasource.username": "infrabe",
-  "spring.flyway.password": "infrabe",
-  "spring.flyway.url": "jdbc:postgresql://postgresql.dataprovider03.svc.cluster.local:5432/infrabe",
-  "spring.flyway.user": "infrabe",
-  "spring.kafka.bootstrap-servers": "kafka.common03.svc.cluster.local:9092",
-  "spring.mail.password": "pass",
-  "spring.mail.username": "user"
-}
-```
-
-| Variable name                |     Example         | Description     |
-| ----------------------       |     :-----:         | --------------- |
-| kafka.sasl.enabled           | true | If kafka authentication is enabled |
-| spring.datasource.password   | infrabe | Password for infrabe database  |
-| spring.datasource.url        | jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/infrabe | Link to datasource |
-| spring.datasource.username   | infrabe | Username for infrabe database |
-| spring.flyway.password   | infrabe | Password for infrabe database  |
-| spring.flyway.url        | jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/infrabe | Link to datasource |
-| spring.flyway.user   | infrabe | Username for infrabe database |
-| spring.kafka.bootstrap-servers   | kafka.common03.svc.cluster.local:9092 | Link to kafka bootstrap service  |
-| spring.mail.password        | password | Password to ionos smtp |
-| spring.mail.username   | infrabe | Username to ionos smtp |
 
 ##### Secret engine for EDC
 

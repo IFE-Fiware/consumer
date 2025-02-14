@@ -1,4 +1,4 @@
-# Consumer Agent
+monitor# Consumer Agent
 
 <!-- TOC -->
 * [Consumer Agent](#consumer-agent)
@@ -42,8 +42,7 @@ Prior to the installation of the consumer agent, make sure to follow the onboard
 | DNS sub-domain name |       N/A       | This domain will be used to address all services of the agent. <br/> example: `*.dataconsumer01.int.simpl-europe.eu`                                                                      |  
 | Kubernetes Cluster  | 1.29.x or newer | Other version *might* work but tests were performed using 1.29.x version                                                                                                                  |
 | nginx-ingress       | 1.10.x or newer | Used as ingress controller. <br/> Other version *might* work but tests were performed using 1.10.x version. <br/> Image used: `registry.k8s.io/ingress-nginx/controller:v1.10.0`          |
-| cert-manager        | 1.15.x or newer | Used for automatic cert management. <br/> Other version *might* work but tests were performed using 1.15.x version. <br/> Image used: `quay.io/jetstack/cert-manager-controller::v1.15.3` |
-| Hashicorp Vault     | 1.17.x or newer | Other version *might* work but tests were performed using 1.17.x version. <br/> Image used: `hashicorp/vault:1.17.2`                                                                      |
+| cert-manager        | 1.15.x or newer | Used for automatic cert management. <br/> Other version *might* work but tests were performed using 1.15.x version. <br/> Image used: `quay.io/jetstack/cert-manager-controller::v1.15.3` |                                                                   |
 | argocd              | 2.11.x or newer | Used as GitOps tool . App of apps concept. <br/> Other version *might* work but tests were performed using 2.11.x version. <br/> Image used: `quay.io/argoproj/argocd:v2.11.3`            |
 
 ## Installation
@@ -121,11 +120,11 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 1.1.0                   # version of package
+    targetRevision: 1.1.2                   # version of package
     helm:
       values: |
         values:
-          branch: v1.1.0                    # branch of repo with values - for released version it should be the release branch
+          branch: v1.1.2                    # branch of repo with values - for released version it should be the release branch
         project: default
         namespaceTag: consumer01            # identifier of deployment and part of fqdn
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
@@ -180,7 +179,7 @@ hashicorp:
 
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
-  branch: develop                                                                    # branch of code in repo
+  branch: v1.1.2                                                                     # branch of code in repo
 ```
 
 ##### Deployment

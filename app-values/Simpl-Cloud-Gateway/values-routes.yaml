@@ -44,6 +44,8 @@ appConfig:
     denied-urls:
       - method: GET
         path: "/auth-api/keypair"
+      - path: "/user-api/mtls/**"
+      - path: "/auth-api/mtls/**"
 
     rbac:
       - path: "/xsfc-advsearch-be/**"

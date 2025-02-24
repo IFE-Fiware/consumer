@@ -120,11 +120,11 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 1.1.2                   # version of package
+    targetRevision: 1.1.3                   # version of package
     helm:
       values: |
         values:
-          branch: v1.1.2                    # branch of repo with values - for released version it should be the release branch
+          branch: v1.1.3                    # branch of repo with values - for released version it should be the release branch
         project: default
         namespaceTag: consumer01            # identifier of deployment and part of fqdn
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
@@ -179,7 +179,7 @@ hashicorp:
 
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
-  branch: v1.1.2                                                                     # branch of code in repo
+  branch: v1.1.3                                                                     # branch of code in repo
 ```
 
 ##### Deployment

@@ -1,6 +1,3 @@
-ingress:
-  issuer: dev-prod
-
 microfrontends:
 - name: usersroles
   application: usersandroles

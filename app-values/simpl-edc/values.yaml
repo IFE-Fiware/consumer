@@ -21,5 +21,11 @@ env:
 contractmanager:
   extension:
     enabled: true
-  apikey: apikey
   url: http://contract-consumer:8080/contract/v1
+
+javadebug:
+  enabled: false
+  port: 5006
+
+serviceAccount:
+  name: simpl-edc-service-account

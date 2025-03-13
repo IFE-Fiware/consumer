@@ -3,7 +3,7 @@ appConfig:
   spring:
     cloud:
       gateway:
-        routes: 
+        routes:
           - id: keycloak
             uri: ${keycloak.url}
             predicates:
@@ -22,6 +22,43 @@ appConfig:
               - Path=/auth-api/**
             filters:
               - StripPrefix=1
+          # CLI configurations
+          - id: cli-authentication-providerV1
+            uri: ${authentication-provider.url}
+            predicates:
+              - Path=
+                /cli/authApi/v1/csr/generate,
+                /cli/authApi/v1/keypairs/generate,
+                /cli/authApi/v1/keypairs,
+                /cli/authApi/v1/credentials,
+                /cli/authApi/v1/credentials/download,
+                /cli/authApi/v1/agent/ping
+            filters:
+              - StripPrefix=2
+              - name: ClientCredentialsFilter
+                args:
+                  # Here you specify the clientid and the required client role to invoke this api
+                  # in the following order: 
+                  # client-id-name: client-role-1, client-role-1
+                  # The default configuration is shown below.
+                  cli: cli-role
+          - id: cli-users-and-rolesV1
+            uri: ${users-roles.url}
+            predicates:
+              - Path=
+                /cli/userApi/v1/users/import,
+                /cli/userApi/v1/roles/import,
+                /cli/userApi/v1/roles/*/identityAttributes
+            filters:
+              - StripPrefix=2
+              - name: ClientCredentialsFilter
+                args:
+                  # Here you specify the clientid and the required client role to invoke this api
+                  # in the following order: 
+                  # client-id-name: client-role-1, client-role-1
+                  # The default configuration is shown below.
+                  cli: cli-role
+  
   springdoc:
     swagger-ui:
       urls:
@@ -30,6 +67,10 @@ appConfig:
         - url: /auth-api/v3/api-docs
           name: Authentication Provider Service
 
+  keycloak:
+    app:
+      realm: participant
+  
   routes:
     public-urls:
       - method: GET
@@ -40,13 +81,17 @@ appConfig:
         path: "/v3/api-docs/**"
       - method: GET
         path: "/actuator/**"
-
+  
     denied-urls:
       - method: GET
         path: "/auth-api/keypair"
+      - method: GET
+        path: "/authApi/v1/keypairs"
       - path: "/user-api/mtls/**"
       - path: "/auth-api/mtls/**"
-
+      - path: "/userApi/v1/mtls/**"
+      - path: "/authApi/v1/mtls/**"
+  
     rbac:
       - path: "/xsfc-advsearch-be/**"
         method: GET
@@ -90,6 +135,11 @@ appConfig:
         method: POST
         roles:
           - T1UAR_M
+      - path: "/user-api/role/*/identity-attributes"
+        method: PUT
+        roles:
+          - T1UAR_M
+          - ONBOARDER_M
       - path: "/user-api/role/delete-attribute"
         method: DELETE
         roles:
@@ -110,11 +160,11 @@ appConfig:
         method: POST
         roles:
           - T1UAR_M
-      - path: "/user-api/user/**"
+      - path: "/user-api/user/*"
         method: GET
         roles:
           - T1UAR_M
-      - path: "/user-api/user/**"
+      - path: "/user-api/user/*"
         method: PUT
         roles:
           - T1UAR_M

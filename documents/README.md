@@ -11,12 +11,13 @@ monitor# Consumer Agent
       * [Create the Namespace](#create-the-namespace)
       * [Verify the Namespace](#verify-the-namespace)
       * [Vault related tasks](#vault-related-tasks)
+        * [Secret for Contract](#secret-for-contract)
+        * [Secret for EDC](#secret-for-edc)
     * [Deployment](#deployment)
       * [Deployment using ArgoCD](#deployment-using-argocd)
       * [Manual deployment](#manual-deployment)
         * [Files preparation](#files-preparation)
         * [Deployment](#deployment)
-    * [Deploy the namespace](#deploy-the-namespace)
   * [Additional steps](#additional-steps)
     * [Monitoring](#monitoring)
 * [Troubleshooting](#troubleshooting)
@@ -31,15 +32,13 @@ This repo contains:
 ## Pre-Requisites
 
 ### Onboarding
-
-Prior to the installation of the consumer agent, make sure to follow the onboarding steps for a data space participant.
-
-[Onboarding a Participant](https://code.europa.eu/simpl/simpl-open/development/iaa/charts/-/blob/develop/doc/0.7.x/ONBOARD.md?ref_type=heads#onboarding-a-participant)
+In the current version, the automatic onboarding process has already been implemented using: init-participant-job. 
+For this reason, manual onboarding activities are no longer necessary.
 
 ### Tools
 | Pre-Requisites      |     Version     | Description                                                                                                                                                                               |
 |---------------------|:---------------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| DNS sub-domain name |       N/A       | This domain will be used to address all services of the agent. <br/> example: `*.dataconsumer01.int.simpl-europe.eu`                                                                      |  
+| DNS sub-domain name |       N/A       | This domain will be used to address all services of the agent. <br/> example: `*.onsumer01.int.simpl-europe.eu`                                                                      |  
 | Kubernetes Cluster  | 1.29.x or newer | Other version *might* work but tests were performed using 1.29.x version                                                                                                                  |
 | nginx-ingress       | 1.10.x or newer | Used as ingress controller. <br/> Other version *might* work but tests were performed using 1.10.x version. <br/> Image used: `registry.k8s.io/ingress-nginx/controller:v1.10.0`          |
 | cert-manager        | 1.15.x or newer | Used for automatic cert management. <br/> Other version *might* work but tests were performed using 1.15.x version. <br/> Image used: `quay.io/jetstack/cert-manager-controller::v1.15.3` |                                                                   |
@@ -62,10 +61,6 @@ To ensure that the namespace was created successfully, run the following command
 
 #### Vault related tasks
 
-##### Secret engine for Signer
-
-Go to Vault UI and define new transit secret engine with path `transit/simpl` create encryption key `gaia-x-key1` with type `ed25519`.
-
 ##### Secret for Contract
 
 One secret is needed, its naming syntax is "{{ .Release.Namespace }}-contract", it should be created in created before kv secret engine.
@@ -83,23 +78,40 @@ Its content is:
 
 Where you need to modify:
 
-| Variable name                 |     Example         | Description     |
-| ----------------------        |     :-----:         | --------------- |
-| DB_USER            | contract | User for contract database |
-| DBPASSWORD         | contract | Password for contract database  |
-| DB_URL             | jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/contract | Link to datasource |
+| Variable name           |     Example         | Description     |
+| ----------------------  |     :-----:         | --------------- |
+| DB_USER                 | contract | User for contract database |
+| DBPASSWORD              | contract | Password for contract database  |
+| DB_URL                  | jdbc:postgresql://postgresql.consumer01.svc.cluster.local:5432/contract | Link to datasource |
 | KAFKA_CLIENT_PASSWORDS  | password | Password for kafka connection |
 
-##### Secret engine for EDC
+##### Secret for EDC
 
-A new KV v2 secret engine is needed for EDC. It should be named "edc". 
-You need to create 5 secrets in it, their names are as below (example in brackets - "content" is the key name, value is after the colon)
+One secret is needed, its name is "*namespace*-simpl-edc", it should be created in created before kv secret engine.
 
-- edc.ionos.access.key (content: suppliedstring)
-- edc.ionos.endpoint (content: s3 server url)
-- edc.ionos.endpoint.region (content: two letter country code)
-- edc.ionos.secret.key (content: secretkeystring)
-- edc.ionos.token (content: tokenstring)
+```
+{
+  "contractmanager_apikey": "apikey",
+  "edc_datasource_default_password": "edc",
+  "edc_datasource_policy_password": "edc",
+  "edc_ionos_access_key": "accesskeystring",
+  "edc_ionos_endpoint": "s3-eu-central-1.ionoscloud.com",
+  "edc_ionos_endpoint_region": "de",
+  "edc_ionos_secret_key": "secretkeystring",
+  "edc_ionos_token": "tokenstring"
+}
+```
+
+| Variable name                    |     Example         | Description              |
+| ----------------------           |     :-----:         | ---------------          |
+| contractmanager_apikey           | apikey              | Apikey string            |
+| edc_datasource_default_password  | edc                 | Password for infrabe database  |
+| edc_datasource_policy_password   | edc                 | Link to datasource       |
+| edc_ionos_access_key             | accesskeystring     | Access key for S3        |
+| edc_ionos_endpoint               | s3-eu-central-1.ionoscloud.com | S3 server url |
+| edc_ionos_endpoint_region        | de                  | Two letter country code  |
+| edc_ionos_secret_key             | secretkeystring     | Secret key for S3        |
+| edc_ionos_token                  | tokenstring         | Token for S3 access      |
 
 ### Deployment
 
@@ -120,11 +132,11 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 1.1.3                   # version of package
+    targetRevision: 1.2.0                   # version of package
     helm:
       values: |
         values:
-          branch: v1.1.3                    # branch of repo with values - for released version it should be the release branch
+          branch: v1.2.0                    # branch of repo with values - for released version it should be the release branch
         project: default
         namespaceTag: consumer01            # identifier of deployment and part of fqdn
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
@@ -173,13 +185,13 @@ cluster:
   commonToolsNamespace: common     # namespace where main monitoring stack is deployed
 
 hashicorp:
-  token: "aHZzLnFPSHdxbTdnWnV1eDlZZEllYzY4bkt3Uw=="  # token to access the vault base64 encoded
+  token: "!@#$%^&*()qwertyuiopasdfghjklzxcvbnm!@#$%^&*()"  # token to access the vault base64 encoded
   service: "http://vault-common03.common03.svc.cluster.local:8200"  # local service path to your vault
   secretEngine: dev-int             # secret engine name created in vault
 
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
-  branch: v1.1.3                                                                     # branch of code in repo
+  branch: v1.2.0                    # branch of repo with values - for released version it should be the release branch
 ```
 
 ##### Deployment
@@ -193,11 +205,8 @@ Now you can deploy the agent:
 
 ## Additional steps
 
-:rotating_light: :rotating_light: :rotating_light: **Attention!!!** :rotating_light: :rotating_light: :rotating_light: <br>
-<b><i>After installing the agent, you need to get through the onboarding process. 
-The entire procedure is described in the code repository:</i></b>
-
-https://code.europa.eu/simpl/simpl-open/development/iaa/charts/-/blob/develop/doc/0.8.x/ONBOARD.md?ref_type=heads
+In the current version, the automatic onboarding process has already been implemented using: init-participant-job.
+For this reason, manual onboarding activities are no longer necessary.
 
 ### Monitoring
 

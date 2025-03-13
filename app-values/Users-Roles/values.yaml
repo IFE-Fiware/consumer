@@ -2,8 +2,6 @@ replicaCount: 1
 
 global:
   profile: participant
-  ingress:
-    issuer: dev-prod
 
 imagePullSecrets: []
 nameOverride: ""

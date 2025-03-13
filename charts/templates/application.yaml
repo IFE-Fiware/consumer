@@ -62,6 +62,7 @@ spec:
         {{- if .Values.keycloak.resources }}
         resources: {{- toYaml .Values.keycloak.resources | nindent 10 }}
         {{- end }}
+  {{- if .Values.xsfc_advsearch_be.enabled }}      
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.xsfc_advsearch_be.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.xsfc_advsearch_be.targetRevision }}
@@ -72,8 +73,6 @@ spec:
         - $values/app-values/xsfc-advsearch-be/{{ . }}
         {{- end }}
       values: |
-        image:
-          repository: "code.europa.eu:4567/simpl/simpl-open/development/data1/xsfc-advsearch-be:{{ .Values.xsfc_advsearch_be.targetRevision }}"
         domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
         usersRoles:
           apiUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
@@ -87,6 +86,8 @@ spec:
           onboarding:
             authorityTLSUri: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
       releaseName: {{ .Values.xsfc_advsearch_be.nameOverride }}
+  {{- end }}
+  {{- if .Values.simpl_catalogue_client.enabled }}    
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_catalogue_client.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.simpl_catalogue_client.targetRevision }}
@@ -112,9 +113,12 @@ spec:
             - secretName: catalogue-ui-tld-secret
               hosts:
                 - catalogue-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          annotations:
+            cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
         {{- if .Values.simpl_catalogue_client.resources }}
         resources: {{- toYaml .Values.simpl_catalogue_client.resources | nindent 10 }}
         {{- end }}
+  {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cloud_gateway.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.simpl_cloud_gateway.targetRevision }}
@@ -131,6 +135,8 @@ spec:
           authorityUrl: https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
           cors:
             allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+          ingress:
+            issuer: {{ .Values.cluster.issuer }}
         keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
         usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         authenticationProviderUrl: http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
@@ -169,12 +175,42 @@ spec:
                       - Path=/xsfc-advsearch-be/**
                     filters:
                       - StripPrefix=1
-                  - id: contract-consumption-be
-                    uri: http://contract-consumption-be.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+                  # CLI configurations
+                  - id: cli-authentication-providerV1
+                    uri: ${authentication-provider.url}
                     predicates:
-                      - Path=/contract-consumption/**
+                      - Path=
+                        /cli/authApi/v1/csr/generate,
+                        /cli/authApi/v1/keypairs/generate,
+                        /cli/authApi/v1/keypairs,
+                        /cli/authApi/v1/credentials,
+                        /cli/authApi/v1/credentials/download,
+                        /cli/authApi/v1/agent/ping
                     filters:
-                      - StripPrefix=1
+                      - StripPrefix=2
+                      - name: ClientCredentialsFilter
+                        args:
+                          # Here you specify the clientid and the required client role to invoke this api
+                          # in the following order: 
+                          # client-id-name: client-role-1, client-role-1
+                          # The default configuration is shown below.
+                          cli: cli-role
+                  - id: cli-users-and-rolesV1
+                    uri: ${users-roles.url}
+                    predicates:
+                      - Path=
+                        /cli/userApi/v1/users/import,
+                        /cli/userApi/v1/roles/import,
+                        /cli/userApi/v1/roles/*/identityAttributes
+                    filters:
+                      - StripPrefix=2
+                      - name: ClientCredentialsFilter
+                        args:
+                          # Here you specify the clientid and the required client role to invoke this api
+                          # in the following order: 
+                          # client-id-name: client-role-1, client-role-1
+                          # The default configuration is shown below.
+                          cli: cli-role
         {{- if .Values.simpl_cloud_gateway.resources }}
         resources: {{- toYaml .Values.simpl_cloud_gateway.resources | nindent 10 }}
         {{- end }}
@@ -191,6 +227,8 @@ spec:
         global:
           hostBe: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
           hostTls: tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
+          ingress:
+            issuer: {{ .Values.cluster.issuer }}
         db:
           url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/usersroles"
         redis:
@@ -223,6 +261,8 @@ spec:
         - $values/app-values/Simpl-fe/{{ . }}
         {{- end }}
       values: |
+        ingress:
+          issuer: {{ .Values.cluster.issuer }}
         hostFe: participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
         cors:
           allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:4203,http://localhost:3000
@@ -289,6 +329,7 @@ spec:
         - $values/app-values/auth-provider/{{ . }}
         {{- end }}
       values: |
+        urlAuthorityT2: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
         db:
           url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/authenticationprovider"
         microservices:
@@ -296,9 +337,12 @@ spec:
         simpl:
           certificate:
             san: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+        redis:
+          host: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
         {{- if .Values.auth_provider.resources }}
         resources: {{- toYaml .Values.auth_provider.resources | nindent 10 }}
         {{- end }}
+  {{- if .Values.simpl_edc.enabled }}      
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_edc.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.simpl_edc.targetRevision }}
@@ -318,17 +362,20 @@ spec:
           callbackAddress: "https://tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/edc"
         env:
           vaultToken: {{ .Values.hashicorp.token }}
-        postgresql:
-          url: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/edc"
-          policyUrl: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/edc"
+          datasourceurl: "jdbc:postgresql://postgresql.{{ .Values.cluster.namespace }}.svc.cluster.local:5432/edc"
         tls:
           url:
             authority: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
             usersRoles: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/credential/download"
             authenticationProvider: "http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/keypair"
+        hashicorp:
+          role: {{ .Values.hashicorp.role }}
+          service: {{ .Values.hashicorp.service }}
+        secretEngine: {{ .Values.hashicorp.secretEngine }}
         {{- if .Values.simpl_edc.resources }}
         resources: {{- toYaml .Values.simpl_edc.resources | nindent 10 }}
         {{- end }}
+  {{- end }}      
   {{- if .Values.monitoring.enabled }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.monitoring.projectID }}/packages/helm/stable"
     path: ''
@@ -341,6 +388,7 @@ spec:
         - $values/app-values/monitoring/{{ . }}
         {{- end }}
       values: |
+        clusterIssuer: {{ .Values.cluster.issuer }}
         domainSuffix: {{ .Values.domainSuffix }}
         namespaceTag: {{ .Values.namespaceTag }}
         mainNamespace: {{ .Values.cluster.commonToolsNamespace }}
@@ -396,6 +444,7 @@ spec:
         {{- range .Values.stubs.valueFiles }}
         - $values/app-values/stubs/{{ . }}
         {{- end }}
+  {{- if .Values.contract_consumption_be.enabled }}      
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.contract_consumption_be.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.contract_consumption_be.targetRevision }}
@@ -413,3 +462,28 @@ spec:
         resources: {{- toYaml .Values.contract_consumption_be.resources | nindent 10 }}
         {{- end }}
       releaseName: {{ .Values.contract_consumption_be.nameOverride }}
+  {{- end }}    
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cli.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.simpl_cli.targetRevision }}
+    chart: {{ .Values.simpl_cli.chart_name }}
+    helm:
+      releaseName: {{ .Values.simpl_cli.fullnameOverride }}
+      valueFiles:
+        {{- range .Values.simpl_cli.valueFiles }}
+        - $values/app-values/simpl-cli/{{ . }}
+        {{- end }}
+      values: |
+        initParticipant:
+          hostT1: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          authorityHostT1: authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
+          csr:
+            cn: tls.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+            o: {{ .Values.namespaceTag }}
+            ou: {{ .Values.namespaceTag }}
+          keycloak:
+            internalHost: "keycloak.{{ .Release.Namespace }}.svc.cluster.local"
+            url: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
+          microservices:
+            usersRolesUrl: https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/cli/userApi/v1/
+            authenticationProviderUrl: https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/cli/authApi/v1/

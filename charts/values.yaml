@@ -66,7 +66,7 @@ redis:
 
 simpl_cloud_gateway:
   projectID: "772"
-  targetRevision: 1.0.0
+  targetRevision: 1.1.0
   chart_name: simpl-cloud-gateway
   resources:
     requests:
@@ -77,8 +77,9 @@ simpl_cloud_gateway:
     - values-routes.yaml
 
 xsfc_advsearch_be:
+  enabled: true
   projectID: "891"
-  targetRevision: 1.4.1
+  targetRevision: 1.5.2
   chart_name: xsfc-advsearch
   resources:
     requests:
@@ -90,7 +91,7 @@ xsfc_advsearch_be:
 
 users_roles:
   projectID: "771"
-  targetRevision: 1.0.0
+  targetRevision: 1.1.2
   chart_name: users-roles
   resources:
     requests:
@@ -101,7 +102,7 @@ users_roles:
 
 simpl_fe:
   projectID: "769"
-  targetRevision: 1.0.7
+  targetRevision: 1.1.2
   chart_name: simpl-fe
   resources:
     requests:
@@ -113,7 +114,7 @@ simpl_fe:
 
 tls_gateway:
   projectID: "860"
-  targetRevision: 1.0.1
+  targetRevision: 1.1.0
   chart_name: tls-gateway
   resources:
     requests:
@@ -124,8 +125,9 @@ tls_gateway:
     - values-routes.yaml
 
 simpl_edc:
+  enabled: true
   projectID: "920"
-  targetRevision: 1.0.1
+  targetRevision: 1.0.3
   chart_name: edc
   nameOverride: simpl-edc
   resources:
@@ -137,8 +139,9 @@ simpl_edc:
     - values-consumer.yaml
 
 simpl_catalogue_client:
+  enabled: true
   projectID: "937"
-  targetRevision: 1.0.0
+  targetRevision: 1.2.0
   chart_name: catalogue-ui
   resources:
     requests:
@@ -149,7 +152,7 @@ simpl_catalogue_client:
 
 auth_provider:
   projectID: "939"
-  targetRevision: 1.0.0
+  targetRevision: 1.1.2
   chart_name: authentication-provider
   resources:
     requests:
@@ -161,7 +164,7 @@ auth_provider:
 monitoring:
   enabled: true
   projectID: "828"
-  targetRevision: 0.1.11
+  targetRevision: 0.1.12
   chart_name: eck-monitoring
   fullnameOverride: elastic
   valueFiles:
@@ -191,8 +194,9 @@ stubs:
     - values.yaml  
 
 contract_consumption_be:
+  enabled: true
   projectID: "968"
-  targetRevision: 1.2.1
+  targetRevision: 1.4.0
   chart_name: contract-consumption-be
   nameOverride: contract-consumption-be
   resources:
@@ -201,3 +205,11 @@ contract_consumption_be:
       memory: "0"
   valueFiles:
     - values.yaml
+
+simpl_cli:
+  projectID: "882"
+  targetRevision: 1.1.0
+  chart_name: simpl-cli
+  fullnameOverride: simpl-cli
+  valueFiles:
+    - values.yaml    

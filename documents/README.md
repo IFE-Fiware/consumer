@@ -119,7 +119,7 @@ spec:
         authority:
           namespaceTag: authority1          # namespace tag of target authority
         hashicorp:
-          service: "http://vault-common03.common03.svc.cluster.local:8200"  # local service path to your vault
+          service: "https://vault.common01.int.simpl-europe.eu"  # https url to your vault
           secretEngine: dev-int             # secret engine name created in vault
     chart: consumer
   destination:
@@ -159,7 +159,7 @@ authority:
   namespaceTag: authority1         # namespace tag of target authority 
 
 hashicorp:
-  service: "http://vault-common03.common03.svc.cluster.local:8200"  # local service path to your vault
+  service: "https://vault.common01.int.simpl-europe.eu"  # https url to your vault
   secretEngine: dev-int            # secret engine name created in vault
   role: dev-int-role               # role name in vault   
 ```

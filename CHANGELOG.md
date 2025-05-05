@@ -1,8 +1,3 @@
-## 1.2.0 (2025-05-05)
-
-No changes.
-
-
 # Changelog
 All notable changes to this project will be documented in this file.
 

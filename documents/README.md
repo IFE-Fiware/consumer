@@ -11,7 +11,6 @@ monitor# Consumer Agent
       * [Create the Namespace](#create-the-namespace)
       * [Verify the Namespace](#verify-the-namespace)
       * [Vault related tasks](#vault-related-tasks)
-        * [Secret for Contract](#secret-for-contract)
         * [Secret for EDC](#secret-for-edc)
     * [Deployment](#deployment)
       * [Deployment using ArgoCD](#deployment-using-argocd)
@@ -46,48 +45,18 @@ For this reason, manual onboarding activities are no longer necessary.
 
 ## Installation
 
-### Prerequisites
-
 #### Create the Namespace
-Once the namespace variable is set, you can create the namespace using the following kubectl command:
 
-`kubectl create namespace consumer1`
-
-#### Verify the Namespace
-To ensure that the namespace was created successfully, run the following command:
-
-`kubectl get namespaces`
-<br/>This will list all the namespaces in your cluster, and you should see the one you just created listed.
+As an update from previous version, all the agent namespaces now are created automatically. 
 
 #### Vault related tasks
 
-##### Secret for Contract
-
-One secret is needed, its naming syntax is "{{ .Release.Namespace }}-contract", it should be created in created before kv secret engine.
-Its content is:
-
-```
-{
-  "API_KEY": "apikey",
-  "DBPASSWORD": "contract",
-  "DB_URL": "jdbc:postgresql://postgresql.consumer03.svc.cluster.local:5432/contract",
-  "DB_USER": "contract",
-  "KAFKA_CLIENT_PASSWORDS": "contract"
-}
-```
-
-Where you need to modify:
-
-| Variable name           |     Example         | Description     |
-| ----------------------  |     :-----:         | --------------- |
-| DB_USER                 | contract | User for contract database |
-| DBPASSWORD              | contract | Password for contract database  |
-| DB_URL                  | jdbc:postgresql://postgresql.consumer01.svc.cluster.local:5432/contract | Link to datasource |
-| KAFKA_CLIENT_PASSWORDS  | password | Password for kafka connection |
+You can access vault on https://vault.**commonnamespacetag**.**domainsuffix**
+Root token can be found in common namespace, secret vault-unseal-keys, in key vault-root. 
 
 ##### Secret for EDC
 
-One secret is needed, its name is "*namespace*-simpl-edc", it should be created in created before kv secret engine.
+Modify the "*namespace*-simpl-edc" secret replacing the data mentioned in the table with proper access credentials. 
 
 ```
 {
@@ -104,14 +73,13 @@ One secret is needed, its name is "*namespace*-simpl-edc", it should be created 
 
 | Variable name                    |     Example         | Description              |
 | ----------------------           |     :-----:         | ---------------          |
-| contractmanager_apikey           | apikey              | Apikey string            |
-| edc_datasource_default_password  | edc                 | Password for infrabe database  |
-| edc_datasource_policy_password   | edc                 | Link to datasource       |
 | edc_ionos_access_key             | accesskeystring     | Access key for S3        |
 | edc_ionos_endpoint               | s3-eu-central-1.ionoscloud.com | S3 server url |
 | edc_ionos_endpoint_region        | de                  | Two letter country code  |
 | edc_ionos_secret_key             | secretkeystring     | Secret key for S3        |
 | edc_ionos_token                  | tokenstring         | Token for S3 access      |
+
+All the other necessary secrets are now created automatically with proper data.
 
 ### Deployment
 
@@ -132,11 +100,11 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 1.2.0                   # version of package
+    targetRevision: 1.3.0                   # version of package
     helm:
       values: |
         values:
-          branch: v1.2.0                    # branch of repo with values - for released version it should be the release branch
+          branch: v1.3.0                    # branch of repo with values - for released version it should be the release branch
         project: default
         namespaceTag: consumer01            # identifier of deployment and part of fqdn
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
@@ -147,10 +115,10 @@ spec:
           address: https://kubernetes.default.svc
           namespace: consumer01             # where the app will be deployed
           commonToolsNamespace: common      # namespace where main monitoring stack is deployed
+          issuer: dev-int-dns01             # certificate issuer
         authority:
           namespaceTag: authority1          # namespace tag of target authority
         hashicorp:
-          token: "aHZzLnFPSHdxbTdnWnV1eDlZZEllYzY4bkt3Uw=="  # token to access the vault base64 encoded
           service: "http://vault-common03.common03.svc.cluster.local:8200"  # local service path to your vault
           secretEngine: dev-int             # secret engine name created in vault
     chart: consumer
@@ -169,10 +137,12 @@ There is basically one file that you need to modify - values.yaml.
 There are a couple of variables you need to replace - described below. The rest you don't need to change.
 
 ```
+values:
+  repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
+  branch: v1.3.0                    # branch of repo with values - for released version it should be the release branch
+
 project: default                   # Project to which the namespace is attached
 namespaceTag: consumer01           # identifier of deployment and part of fqdn
-authority:
-  namespaceTag: authority1         # namespace tag of target authority 
 domainSuffix: int.simpl-europe.eu  # last part of fqdn
 
 argocd:
@@ -183,15 +153,15 @@ cluster:
   address: https://kubernetes.default.svc
   namespace: consumer01            # where the package will be deployed
   commonToolsNamespace: common     # namespace where main monitoring stack is deployed
+  issuer: dev-int-dns01            # certificate issuer
+
+authority:
+  namespaceTag: authority1         # namespace tag of target authority 
 
 hashicorp:
-  token: "!@#$%^&*()qwertyuiopasdfghjklzxcvbnm!@#$%^&*()"  # token to access the vault base64 encoded
   service: "http://vault-common03.common03.svc.cluster.local:8200"  # local service path to your vault
-  secretEngine: dev-int             # secret engine name created in vault
-
-values:
-  repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
-  branch: v1.2.0                    # branch of repo with values - for released version it should be the release branch
+  secretEngine: dev-int            # secret engine name created in vault
+  role: dev-int-role               # role name in vault   
 ```
 
 ##### Deployment

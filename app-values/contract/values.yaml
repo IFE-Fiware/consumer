@@ -1,10 +1,7 @@
 deployment:
   replicas: 1
   mode: CONSUMER
-  db:
-    user: contract
   kafka:
-    clientUser: user1
     securityProtocol: SASL_PLAINTEXT
     sasl:
       mechanism: PLAIN

@@ -63,7 +63,7 @@ xsfc_advsearch_be:
 
 users_roles:
   projectID: "771"
-  targetRevision: 1.5.2
+  targetRevision: 1.5.0
   chart_name: users-roles
   resources:
     requests:

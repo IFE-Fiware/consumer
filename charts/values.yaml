@@ -60,7 +60,7 @@ xfsc_advsearch_be:
       memory: "0"
   valueFiles:
     - values.yaml
-  nameOverride: xfsc-advsearch-be
+  nameOverride: xsfc-advsearch-be
 
 users_roles:
   projectID: "771"

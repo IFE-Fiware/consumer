@@ -531,7 +531,7 @@ spec:
         {{- end }}
         vault:
           secretEngine: "{{ .Values.hashicorp.secretEngine }}
-          secretPath: "{{ .Values.deployment.vault.hashicorp.secretEngine }}/{{ .Release.Namespace }}-contract-consumption-be"
+          secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Release.Namespace }}-contract-consumption-be"
           role: "{{ .Values.hashicorp.role }}
           service: "{{ .Values.hashicorp.service }}"
 

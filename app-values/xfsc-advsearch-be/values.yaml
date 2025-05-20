@@ -1,3 +1,6 @@
+image:
+  repository: "code.europa.eu:4567/simpl/simpl-open/development/data1/xfsc-advsearch-be"
+
 #Service port of component SD-Tooling-Api-Validation
 xsfcAdvsearchServicePort: 8080
 

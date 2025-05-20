@@ -529,12 +529,11 @@ spec:
         {{- if .Values.contract_consumption_be.resources }}
         resources: {{- toYaml .Values.contract_consumption_be.resources | nindent 10 }}
         {{- end }}
-        vault:
-          secretEngine: "{{ .Values.hashicorp.secretEngine }}
-          secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Release.Namespace }}-contract-consumption-be"
-          role: "{{ .Values.hashicorp.role }}
-          service: "{{ .Values.hashicorp.service }}"
-
+        # vault:
+        #   secretEngine: "{{ .Values.hashicorp.secretEngine }}
+        #   secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Release.Namespace }}-contract-consumption-be"
+        #   role: "{{ .Values.hashicorp.role }}
+        #   service: "{{ .Values.hashicorp.service }}"
       releaseName: {{ .Values.contract_consumption_be.nameOverride }}
   {{- end }}    
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cli.projectID }}/packages/helm/stable"

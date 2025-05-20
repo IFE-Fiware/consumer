@@ -103,11 +103,11 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 1.3.1                   # version of package
+    targetRevision: 1.3.2                   # version of package
     helm:
       values: |
         values:
-          branch: v1.3.1                    # branch of repo with values - for released version it should be the release branch
+          branch: v1.3.2                    # branch of repo with values - for released version it should be the release branch
         project: default
         namespaceTag: consumer01            # identifier of deployment and part of fqdn
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
@@ -122,8 +122,9 @@ spec:
         authority:
           namespaceTag: authority1          # namespace tag of target authority
         hashicorp:
-          service: "https://vault.common01.int.simpl-europe.eu"  # https url to your vault
+          service: "https://vault.common.domainsuffix"  # link to your vault ingress (apply domain suffix)
           secretEngine: dev-int             # secret engine name created in vault
+          role: dev-int-role                # role name in vault 
     chart: consumer
   destination:
     server: 'https://kubernetes.default.svc'
@@ -142,7 +143,7 @@ There are a couple of variables you need to replace - described below. The rest 
 ```
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
-  branch: v1.3.1                    # branch of repo with values - for released version it should be the release branch
+  branch: v1.3.2                    # branch of repo with values - for released version it should be the release branch
 
 project: default                   # Project to which the namespace is attached
 namespaceTag: consumer01           # identifier of deployment and part of fqdn
@@ -162,7 +163,7 @@ authority:
   namespaceTag: authority1         # namespace tag of target authority 
 
 hashicorp:
-  service: "https://vault.common01.int.simpl-europe.eu"  # https url to your vault
+  service: "https://vault.common.domainsuffix"  # link to your vault ingress (apply domain suffix)
   secretEngine: dev-int            # secret engine name created in vault
   role: dev-int-role               # role name in vault   
 ```

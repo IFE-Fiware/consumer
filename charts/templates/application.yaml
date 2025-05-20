@@ -167,10 +167,10 @@ spec:
                       - Path=/contract-consumption/**
                     filters:
                       - StripPrefix=1
-                  - id: xsfc-advsearch-be
-                    uri: http://xsfc-advsearch-be.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+                  - id: xfsc-advsearch-be
+                    uri: http://xfsc-advsearch-be.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
                     predicates:
-                      - Path=/xsfc-advsearch-be/**
+                      - Path=/xfsc-advsearch-be/**
                     filters:
                       - StripPrefix=1
                   # CLI configurations

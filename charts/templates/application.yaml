@@ -95,8 +95,8 @@ spec:
       values: |
         env:
           PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_FC_DATA_URL: "https://xsfc-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/xsfc-advsearch-be"
+          PUBLIC_FC_DATA_URL: "https://xfsc-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+          PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/xfsc-advsearch-be"
           PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/contract-consumption"
         ingress:
           hosts:

@@ -534,6 +534,8 @@ spec:
           secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"
           role: "{{ .Values.hashicorp.role }}"
           service: "{{ .Values.hashicorp.service }}"
+        kafka:
+          bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
       releaseName: {{ .Values.contract_consumption_be.nameOverride }}
   {{- end }}    
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cli.projectID }}/packages/helm/stable"

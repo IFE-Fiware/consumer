@@ -11,5 +11,5 @@ resources:
     memory: "2Gi"
 
 serviceAccount:
-  prefix: ""
+  # prefix: ""
   name: contract-consumption-service-account

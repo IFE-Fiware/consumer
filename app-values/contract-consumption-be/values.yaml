@@ -12,4 +12,4 @@ resources:
 
 serviceAccount:
   prefix: ""
-  
+  name: contract-consumption-service-account

@@ -71,7 +71,7 @@ spec:
         domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
         usersRoles:
           tier1Gateway:
-            url: http://participant.be.{{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}/user-api
+            url: http://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/user-api
         catalogueAdapter:
           tier2Gateway:
             url: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"

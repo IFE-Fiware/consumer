@@ -70,16 +70,14 @@ spec:
       values: |
         domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
         usersRoles:
-          apiUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+          tier1Gateway:
+            url: http://participant.be.{{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}/user-api
         catalogueAdapter:
           tier2Gateway:
-            uri: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+            url: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
         federatedCatalogue:
           tier2Gateway:
-            uri: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-        participant:
-          onboarding:
-            authorityTLSUri: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+            url: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
       releaseName: {{ .Values.xfsc_advsearch_be.nameOverride }}
   {{- end }}
   {{- if .Values.simpl_catalogue_client.enabled }}    

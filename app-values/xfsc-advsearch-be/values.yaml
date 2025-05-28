@@ -21,7 +21,8 @@ schemaPvcMountPath: /data
 
 # authentication provider
 authenticationProvider:
-  apiUrl: http://authentication-provider:8080
+  service: 
+    url: http://authentication-provider:8080
 
 # federated catalog application (fc-service)
 federatedCatalogue:

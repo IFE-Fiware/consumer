@@ -185,3 +185,4 @@ simpl_cli:
   fullnameOverride: simpl-cli
   valueFiles:
     - values.yaml    
+

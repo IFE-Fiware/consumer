@@ -3,8 +3,11 @@ values:
   branch: v1.3.0
 
 project: ${PROJECT}
-namespaceTag: ${NAMESPACETAG}
 domainSuffix: ${DOMAINSUFFIX}
+namespaceTag:
+  consumer: ${NAMESPACETAG}
+  authority: ${AUTHNAMESPACETAG}
+  common: ${COMMONSPACETAG}
 
 argocd:
   appname: ${NAMESPACE}
@@ -109,6 +112,15 @@ simpl_edc:
   valueFiles:
     - values.yaml
     - values-consumer.yaml
+
+edc_connector_adapter:
+  enabled:  true
+  projectID: "1091"
+  targetRevision: 1.1.2
+  chart_name: edc-connector-adapter
+  nameOverride: edc-connector-adapter
+  valueFiles:
+    - values.yaml
 
 simpl_catalogue_client:
   enabled: true

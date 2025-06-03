@@ -27,7 +27,7 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
-        apiUrl: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+        apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
@@ -35,18 +35,18 @@ spec:
           adminPassword: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
         externalDatabase:
           host: "pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local"
-          database: {{ .Values.namespaceTag }}_keycloak
-          user: {{ .Values.namespaceTag }}_keycloak
+          database: {{ .Values.namespaceTag.consumer }}_keycloak
+          user: {{ .Values.namespaceTag.consumer }}_keycloak
           password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-keycloak
         extraEnvVars:
         - name: KC_HOSTNAME_ADMIN
-          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
         - name: KC_HOSTNAME
-          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
         - name: USERS_ROLES_BASE_URL
           value: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080"
         - name: KEYCLOAK_BASE_URL
-          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
         - name: REALM
           value: "participant"
         - name: KEYCLOAK_EXTRA_ARGS
@@ -68,10 +68,10 @@ spec:
         - $values/app-values/xfsc-advsearch-be/{{ . }}
         {{- end }}
       values: |
-        domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         usersRoles:
           tier1Gateway:
-            url: http://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/user-api
+            url: http://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/user-api
         catalogueAdapter:
           tier2Gateway:
             url: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
@@ -92,20 +92,20 @@ spec:
         {{- end }}
       values: |
         env:
-          PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+          PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
           PUBLIC_FC_DATA_URL: "https://xfsc-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-          PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/xfsc-advsearch-be"
-          PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/contract-consumption"
+          PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/xfsc-advsearch-be"
+          PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/contract-consumption"
         ingress:
           hosts:
-            - host: catalogue-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+            - host: catalogue-ui.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
               paths:
               - path: /
                 pathType: ImplementationSpecific
           tls:
             - secretName: catalogue-ui-tld-secret
               hosts:
-                - catalogue-ui.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+                - catalogue-ui.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
           annotations:
             cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
         {{- if .Values.simpl_catalogue_client.resources }}
@@ -122,9 +122,9 @@ spec:
         - $values/app-values/tier1-gateway/{{ . }}
         {{- end }}
       values: |
-        hostT1: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         cors:
-          allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+          allowOrigin: https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
         ingress:
           issuer: {{ .Values.cluster.issuer }}
         keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
@@ -146,7 +146,7 @@ spec:
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
-        hostT1: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         authorityHostT2: tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
         global:
           ingress:
@@ -156,7 +156,7 @@ spec:
             password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
         db:
           url: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_usersroles"
-          username: {{ .Values.namespaceTag }}_usersroles
+          username: {{ .Values.namespaceTag.consumer }}_usersroles
           password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-usersroles
         env:
         - name: KAFKA_USERSROLES
@@ -200,14 +200,14 @@ spec:
       values: |
         ingress:
           issuer: {{ .Values.cluster.issuer }}
-        hostFe: participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        hostFe: participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         cors:
-          allowOrigin: https://participant.fe.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:4203,http://localhost:3000
+          allowOrigin: https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:4203,http://localhost:3000
         env:
         - name: API_URL
-          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         - name: KEYCLOAK_URL
-          value: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
         - name: KEYCLOAK_REALM
           value: "participant"
         - name: KEYCLOAK_CLIENT_ID
@@ -243,7 +243,7 @@ spec:
           password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-redis#redis
         kafka:
           bootstrap-servers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092   
-        hostT2: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+        hostT2: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
         appConfig:
           spring:
@@ -296,7 +296,7 @@ spec:
         urlAuthorityT2: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
         db:
           url: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_authenticationprovider"
-          username: {{ .Values.namespaceTag }}_authenticationprovider
+          username: {{ .Values.namespaceTag.consumer }}_authenticationprovider
           password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-authenticationprovider
         env:
         - name: KAFKA_AUTHPROVIDER
@@ -305,7 +305,7 @@ spec:
           usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         simpl:
           certificate:
-            san: "tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+            san: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         redis:
           host: "redis-master.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local"
           password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-redis#redis
@@ -340,12 +340,12 @@ spec:
         {{- end }}
       values: |
         ingress:
-          host: edc.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
           vault:
             url: {{ .Values.hashicorp.service }}
-          callbackAddress: "https://tls.participant.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/edc"
+          callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"
         env:
           datasourceurl: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_edc"
         postgresql:
@@ -362,7 +362,31 @@ spec:
         {{- if .Values.simpl_edc.resources }}
         resources: {{- toYaml .Values.simpl_edc.resources | nindent 10 }}
         {{- end }}
-  {{- end }}      
+  {{- end }} 
+  {{- if .Values.edc_connector_adapter.enabled }}      
+  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.edc_connector_adapter.projectID }}/packages/helm/stable"
+    path: ''
+    targetRevision: {{ .Values.edc_connector_adapter.targetRevision }}
+    chart: {{ .Values.edc_connector_adapter.chart_name }}
+    helm:
+      releaseName: {{ .Values.edc_connector_adapter.nameOverride }}
+      valueFiles:
+        {{- range .Values.edc_connector_adapter.valueFiles }}
+        - $values/app-values/edc-connector-adapter/{{ . }}
+        {{- end }}
+      values: |
+        domain: {{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}
+        openapiConfig:
+          servers: https://edc-connector-adapter.{{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}
+        openTelemetry:
+          otlpExporter:
+            endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
+        edcConnector:
+          tier2BaseUrl: https://tls.participant.{{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}/edc
+        {{- if .Values.edc_connector_adapter.resources }}
+        resources: {{- toYaml .Values.edc_connector_adapter.resources | nindent 10 }}
+        {{- end }}
+  {{- end }}
   {{- if .Values.monitoring.enabled }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.monitoring.projectID }}/packages/helm/stable"
     path: ''
@@ -377,7 +401,7 @@ spec:
       values: |
         clusterIssuer: {{ .Values.cluster.issuer }}
         domainSuffix: {{ .Values.domainSuffix }}
-        namespaceTag: {{ .Values.namespaceTag }}
+        namespaceTag: {{ .Values.namespaceTag.consumer }}
         mainNamespace: {{ .Values.cluster.commonToolsNamespace }}
         heartbeat:
           services:
@@ -444,7 +468,7 @@ spec:
         - $values/app-values/contract-consumption-be/{{ . }}
         {{- end }}
       values: |
-        domain: {{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+        domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         edcConsumer:
           baseUrl: http://simpl-edc-service.{{ .Values.cluster.namespace }}.svc.cluster.local:29193
         {{- if .Values.contract_consumption_be.resources }}
@@ -474,19 +498,19 @@ spec:
           vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         initParticipant:
-          hostT1: participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
+          hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
           authorityHostT1: authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
           csr:
-            cn: tls.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}
-            o: {{ .Values.namespaceTag }}
-            ou: {{ .Values.namespaceTag }}
+            cn: tls.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+            o: {{ .Values.namespaceTag.consumer }}
+            ou: {{ .Values.namespaceTag.consumer }}
           keycloak:
             internalHost: "keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local"
-            url: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/auth"
+            url: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
             master:
               password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
             authority:
               password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.authority.namespaceTag }}-keycloak#admin
           microservices:
-            usersRolesUrl: https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/cli/userApi/v1/
-            authenticationProviderUrl: https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}/cli/authApi/v1/
+            usersRolesUrl: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/cli/userApi/v1/
+            authenticationProviderUrl: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/cli/authApi/v1/

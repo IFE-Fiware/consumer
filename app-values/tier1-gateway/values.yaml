@@ -48,6 +48,13 @@ appConfig:
               - Path=/xfsc-advsearch-be/**
             filters:
               - StripPrefix=1
+          - id: edc-connector
+            uri: http://edc-connector-adapter:8080
+            predicates:
+              - Path=/edc-connector-adapter/**
+            filters:
+              - StripPrefix=1
+    
           # CLI configurations
           - id: cli-authentication-providerV1
             uri: ${authentication-provider.url}
@@ -212,3 +219,11 @@ appConfig:
         method: HEAD
         roles:
           - ONBOARDER_M
+      - path: "/edc-connector-adapter/api/*/registration/register"
+        method: GET
+        roles:
+          - SD_PUBLISHER
+      - path: "/edc-connector-adapter/api/*/configuration/participant"
+        method: POST
+        roles:
+          - SD_PUBLISHER

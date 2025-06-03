@@ -245,23 +245,6 @@ spec:
           bootstrap-servers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092   
         hostT2: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
-        appConfig:
-          spring:
-            cloud:
-              gateway:
-                routes:
-                  - id: edc
-                    uri: http://simpl-edc-service.{{ .Values.cluster.namespace }}.svc.cluster.local:29194
-                    predicates:
-                      - Path=/edc/**
-                    filters:
-                      - StripPrefix=1
-                  - id: user-roles
-                    uri: ${users-roles.url}
-                    predicates:
-                      - Path=/user-api/mtls/**
-                    filters:
-                      - StripPrefix=1
         kafkaConfig:
           spring:
             kafka:

@@ -177,7 +177,7 @@ stubs:
 contract_consumption_be:
   enabled: true
   projectID: "968"
-  targetRevision: 1.7.0
+  targetRevision: 1.6.2
   chart_name: contract-consumption-be
   nameOverride: contract-consumption-be
   resources:

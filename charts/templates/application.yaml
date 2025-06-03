@@ -474,6 +474,12 @@ spec:
         {{- if .Values.contract_consumption_be.resources }}
         resources: {{- toYaml .Values.contract_consumption_be.resources | nindent 10 }}
         {{- end }}
+        openapiConfig:
+          servers: https://creation-wizard-api.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+        openTelemetry:
+          otlpExporter:
+          # collector endpoint for the OTLP exporter
+            endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
         vault:
           secretEngine: "{{ .Values.hashicorp.secretEngine }}"
           secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"

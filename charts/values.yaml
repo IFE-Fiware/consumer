@@ -19,9 +19,6 @@ cluster:
   commonToolsNamespace: ${COMMONNAMESPACE}
   issuer: ${CLUSTERISSUER}
 
-authority:
-  namespaceTag: ${AUTHNAMESPACETAG}
-
 hashicorp:
   service: "http://vault.namespace.svc.cluster.local:8200"
   secretEngine: ${SECRETENGINE}

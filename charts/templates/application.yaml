@@ -358,14 +358,14 @@ spec:
         - $values/app-values/edc-connector-adapter/{{ . }}
         {{- end }}
       values: |
-        domain: {{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}
+        domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         openapiConfig:
-          servers: https://edc-connector-adapter.{{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}
+          servers: https://edc-connector-adapter.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         openTelemetry:
           otlpExporter:
             endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
         edcConnector:
-          tier2BaseUrl: https://tls.participant.{{ .Values.namespaceTag.mine }}.{{ .Values.domainSuffix }}/edc
+          tier2BaseUrl: https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc
         {{- if .Values.edc_connector_adapter.resources }}
         resources: {{- toYaml .Values.edc_connector_adapter.resources | nindent 10 }}
         {{- end }}

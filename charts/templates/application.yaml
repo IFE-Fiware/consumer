@@ -27,7 +27,7 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
-        apiUrl: "https://participant.be.{{ .Values.namespaceTag }}.{{ .Values.domainSuffix }}"
+        apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}

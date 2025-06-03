@@ -13,3 +13,15 @@ resources:
 serviceAccount:
   prefix: ""
   name: contract-consumption-service-account
+  
+openTelemetry:
+  # disables the OpenTelemetry SDK (true on local dev)   
+  disabled: true
+  # used to identify the environment
+  environment: int
+  otlpExporter:
+    # protocol used by the OTLP exporter (http/protobuf or grpc)
+    protocol: http/protobuf
+  # context propagation type
+  propagators: tracecontext
+

@@ -132,6 +132,8 @@ spec:
         hashicorp:
           service: "https://vault.common01.int.simpl-europe.eu"  # https url to your vault
           secretEngine: dev-int             # secret engine name created in vault
+        monitoring:
+          enabled: false                    # should monitoring be disabled
     chart: consumer
   destination:
     server: 'https://kubernetes.default.svc'

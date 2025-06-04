@@ -117,7 +117,10 @@ spec:
         values:
           branch: v1.3.1                    # branch of repo with values - for released version it should be the release branch
         project: default
-        namespaceTag: consumer01            # identifier of deployment and part of fqdn
+        namespaceTag: 
+          consumer: consumer01              # identifier of deployment and part of fqdn for this agent
+          authority: authority01            # identifier of deployment and part of fqdn for authority
+          common: common01                  # identifier of deployment and part of fqdn for common components
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
         argocd:
           appname: consumer01               # name of generated argocd app 

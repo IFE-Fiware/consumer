@@ -74,10 +74,10 @@ spec:
             url: http://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/user-api
         catalogueAdapter:
           tier2Gateway:
-            url: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+            url: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         federatedCatalogue:
           tier2Gateway:
-            url: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+            url: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
       releaseName: {{ .Values.xfsc_advsearch_be.nameOverride }}
   {{- end }}
   {{- if .Values.simpl_catalogue_client.enabled }}    
@@ -93,7 +93,7 @@ spec:
       values: |
         env:
           PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
-          PUBLIC_FC_DATA_URL: "https://xfsc-server-service.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+          PUBLIC_FC_DATA_URL: "https://xfsc-server-service.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
           PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/xfsc-advsearch-be"
           PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/contract-consumption"
         ingress:
@@ -147,7 +147,7 @@ spec:
           vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-        authorityHostT2: tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
+        authorityHostT2: tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}
         global:
           ingress:
             issuer: {{ .Values.cluster.issuer }}
@@ -233,7 +233,7 @@ spec:
           value: "vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_tier2gw"
         global:
           cors:
-            allowOrigin: https://authority.fe.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+            allowOrigin: https://authority.fe.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }},https://authority.be.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
         microservices:
           usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
           keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
@@ -244,7 +244,7 @@ spec:
         kafka:
           bootstrap-servers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092   
         hostT2: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
-        authorityUrlT1: "https://authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+        authorityUrlT1: "https://authority.be.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         kafkaConfig:
           spring:
             kafka:
@@ -276,7 +276,7 @@ spec:
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
-        urlAuthorityT2: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+        urlAuthorityT2: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         db:
           url: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_authenticationprovider"
           username: {{ .Values.namespaceTag.consumer }}_authenticationprovider
@@ -335,7 +335,7 @@ spec:
           username: {{ .Values.cluster.namespace }}_edc
         tls:
           url:
-            authority: "https://tls.authority.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}"
+            authority: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
             usersRoles: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/credential/download"
             authenticationProvider: "http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/keypair"
         hashicorp:
@@ -488,7 +488,7 @@ spec:
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         initParticipant:
           hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-          authorityHostT1: authority.be.{{ .Values.authority.namespaceTag }}.{{ .Values.domainSuffix }}
+          authorityHostT1: authority.be.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}
           csr:
             cn: tls.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
             o: {{ .Values.namespaceTag.consumer }}
@@ -499,7 +499,7 @@ spec:
             master:
               password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
             authority:
-              password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.authority.namespaceTag }}-keycloak#admin
+              password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.namespaceTag.authority }}-keycloak#admin
           microservices:
             usersRolesUrl: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/cli/userApi/v1/
             authenticationProviderUrl: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/cli/authApi/v1/

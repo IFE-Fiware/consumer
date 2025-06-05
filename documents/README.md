@@ -73,14 +73,6 @@ Create a secret named "*namespace*-simpl-edc" replacing the data mentioned in th
 
 | Variable name                    |     Example         | Description              |
 | ----------------------           |     :-----:         | ---------------          |
-| edc_ionos_access_key             | accesskeystring     | Access key for S3        |
-| edc_ionos_endpoint               | s3-eu-central-1.ionoscloud.com | S3 server url |
-| edc_ionos_endpoint_region        | de                  | Two letter country code  |
-| edc_ionos_secret_key             | secretkeystring     | Secret key for S3        |
-| edc_ionos_token                  | tokenstring         | Token for S3 access      |
-
-| Variable name                    |     Example         | Description              |
-| ----------------------           |     :-----:         | ---------------          |
 | contractmanager_apikey           | apikey              | api key string           |
 | edc_datasource_default_password  | dbpassstring        | take the password from *namespace*-postgres-passwords vault secret, key *namespace*-edc |
 | edc_datasource_policy_password   | dbpassstring        | take the password from *namespace*-postgres-passwords vault secret, key *namespace*-edc |
@@ -133,7 +125,7 @@ spec:
         authority:
           namespaceTag: authority1          # namespace tag of target authority
         hashicorp:
-          service: "https://vault.common01.int.simpl-europe.eu"  # https url to your vault
+          service: "https://vault.common.domainsuffix"  # link to your vault ingress (apply domain suffix)
           secretEngine: dev-int             # secret engine name created in vault
         monitoring:
           enabled: false                    # should monitoring be disabled
@@ -155,7 +147,7 @@ There are a couple of variables you need to replace - described below. The rest 
 ```
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
-  branch: v1.3.1                    # branch of repo with values - for released version it should be the release branch
+  branch: v1.3.3                    # branch of repo with values - for released version it should be the release branch
 
 project: default                   # Project to which the namespace is attached
 namespaceTag: consumer01           # identifier of deployment and part of fqdn
@@ -175,7 +167,7 @@ authority:
   namespaceTag: authority1         # namespace tag of target authority 
 
 hashicorp:
-  service: "https://vault.common01.int.simpl-europe.eu"  # https url to your vault
+  service: "https://vault.common.domainsuffix"  # link to your vault ingress (apply domain suffix)
   secretEngine: dev-int            # secret engine name created in vault
   role: dev-int-role               # role name in vault   
 ```

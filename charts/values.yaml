@@ -20,7 +20,7 @@ cluster:
   issuer: ${CLUSTERISSUER}
 
 hashicorp:
-  service: "http://vault.namespace.svc.cluster.local:8200"
+  service: "https://vault.common.domainsuffix"
   secretEngine: ${SECRETENGINE}
   role: ${SECRETROLE}
 

@@ -103,13 +103,16 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 1.3.3                   # version of package
+    targetRevision: 2.0.0                   # version of package
     helm:
       values: |
         values:
-          branch: v1.3.3                    # branch of repo with values - for released version it should be the release branch
+          branch: v2.0.0                    # branch of repo with values - for released version it should be the release branch
         project: default
-        namespaceTag: consumer01            # identifier of deployment and part of fqdn
+        namespaceTag: 
+          consumer: consumer01              # identifier of deployment and part of fqdn for this agent
+          authority: authority01            # identifier of deployment and part of fqdn for authority
+          common: common01                  # identifier of deployment and part of fqdn for common components
         domainSuffix: int.simpl-europe.eu   # last part of fqdn
         argocd:
           appname: consumer01               # name of generated argocd app 
@@ -124,7 +127,8 @@ spec:
         hashicorp:
           service: "https://vault.common.domainsuffix"  # link to your vault ingress (apply domain suffix)
           secretEngine: dev-int             # secret engine name created in vault
-          role: dev-int-role                # role name in vault 
+        monitoring:
+          enabled: false                    # should monitoring be disabled
     chart: consumer
   destination:
     server: 'https://kubernetes.default.svc'

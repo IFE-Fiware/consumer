@@ -74,7 +74,7 @@ users_roles:
 
 simpl_fe:
   projectID: "769"
-  targetRevision: 1.5.2
+  targetRevision: 1.5.4
   chart_name: simpl-fe
   resources:
     requests:

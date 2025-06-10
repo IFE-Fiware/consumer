@@ -3,6 +3,12 @@ appConfig:
     cloud:
       gateway:
         routes:
+          - id: edc
+            uri: http://simpl-edc-service:29194
+            predicates:
+              - Path=/edc/**
+            filters:
+              - StripPrefix=1
           - id: users-roles
             uri: ${users-roles.url}
             predicates:

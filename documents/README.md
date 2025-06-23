@@ -103,11 +103,11 @@ spec:
   source:
     repoURL: 'https://code.europa.eu/api/v4/projects/903/packages/helm/stable'
     path: '""'
-    targetRevision: 2.0.0                   # version of package
+    targetRevision: 2.0.1                   # version of package
     helm:
       values: |
         values:
-          branch: v2.0.0                    # branch of repo with values - for released version it should be the release branch
+          branch: v2.0.1                    # branch of repo with values - for released version it should be the release branch
         project: default
         namespaceTag: 
           consumer: consumer01              # identifier of deployment and part of fqdn for this agent
@@ -147,7 +147,7 @@ There are a couple of variables you need to replace - described below. The rest 
 ```
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git  # repo URL
-  branch: v1.3.3                    # branch of repo with values - for released version it should be the release branch
+  branch: v2.0.1                    # branch of repo with values - for released version it should be the release branch
 
 project: default                   # Project to which the namespace is attached
 namespaceTag: consumer01           # identifier of deployment and part of fqdn

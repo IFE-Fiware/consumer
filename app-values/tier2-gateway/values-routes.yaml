@@ -9,10 +9,22 @@ appConfig:
               - Path=/edc/**
             filters:
               - StripPrefix=1
+          - id: authentication-provider
+            uri: ${authentication-provider.url}
+            predicates:
+              - Path=/authApi/v1/mtls/**
+            filters:
+              - StripPrefix=1
           - id: users-roles
             uri: ${users-roles.url}
             predicates:
               - Path=/user-api/mtls/**
+            filters:
+              - StripPrefix=1
+          - id: users-roles-V1
+            uri: ${users-roles.url}
+            predicates:
+              - Path=/userApi/v1/mtls/**
             filters:
               - StripPrefix=1
 
@@ -27,10 +39,20 @@ appConfig:
     - method: POST
       path: "/user-api/mtls/ephemeral-proof"
       disable-ephemeral-proof-check: true
+    - method: POST
+      path: "/authApi/v1/mtls/ephemeralProof"
+      disable-ephemeral-proof-check: true
+
     # Example of ABAC
     # - path: "/this-is-an-example"
     #   method: GET
-    #   disable-ephemeral-proof-check: true
     #   identity-attributes:
     #     - CONSUMER
     #     - DATA_PROVIDER
+  logging:
+    business:
+      - method: GET
+        path: /user-api/mtls/ping
+        config:
+          operations:
+            - PING_REQUEST

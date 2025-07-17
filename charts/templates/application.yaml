@@ -29,7 +29,7 @@ spec:
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
         apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
+          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         auth:
           adminPassword: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
@@ -45,18 +45,61 @@ spec:
           value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
         - name: USERS_ROLES_BASE_URL
           value: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080"
+        - name: AUTHENTICATION_PROVIDER_BASE_URL
+          value: "http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080"
         - name: KEYCLOAK_BASE_URL
           value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
         - name: REALM
           value: "participant"
         - name: KEYCLOAK_EXTRA_ARGS
           value: --import-realm
+
+        initContainers: 
+        - name: init-spi
+          image: curlimages/curl
+          command: ["/bin/sh", "-c"]
+          env:
+            - name: ARTIFACT
+              value: keycloak-authenticator
+            - name: URL
+              value: https://code.europa.eu/api/v4/projects/915/packages/maven/com/aruba/simpl/keycloak-authenticator/2.0.0/keycloak-authenticator-2.0.0.jar
+          args:
+            - |
+              curl -o /custom-spi/${ARTIFACT}.jar ${URL};
+          volumeMounts:
+            - name: spi-volume
+              mountPath: /custom-spi
+        - name: import-realm
+          image: nginx:latest
+          command: ["/bin/sh", "-c"]
+          env:
+            - name: REDIRECT_URIS
+              value: |-
+                [ "https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/*","https://catalogue-ui.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/*" ]
+            - name: REALM_NAME
+              value: realm
+            - name: URL
+              value: https://code.europa.eu/simpl/simpl-open/development/iaa/charts/-/raw/develop/samples/keycloak-realms/2.0.0/participant-realm-export.json?ref_type=heads
+          args:
+            - |
+              curl ${URL} | envsubst '$REDIRECT_URIS' > /config/${REALM_NAME}.json;
+          volumeMounts:
+            - name: realm-volume
+              mountPath: /config
+
         {{- if .Values.keycloak.resourcesPreset }}
         resourcesPreset: {{ .Values.keycloak.resourcesPreset }}
         {{- end }}
-        {{- if .Values.keycloak.resources }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}
+          {{- if .Values.keycloak.resources }}
         resources: {{- toYaml .Values.keycloak.resources | nindent 10 }}
-        {{- end }}
+          {{- end }}
+        {{- end }}  
   {{- if .Values.xfsc_advsearch_be.enabled }}      
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.xfsc_advsearch_be.projectID }}/packages/helm/stable"
     path: ''
@@ -78,7 +121,19 @@ spec:
         federatedCatalogue:
           tier2Gateway:
             url: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
+
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}
+          {{- if .Values.xfsc_advsearch_be.resources }}
+        resources: {{- toYaml .Values.xfsc_advsearch_be.resources | nindent 10 }}
+          {{- end }}
+        {{- end }}
       releaseName: {{ .Values.xfsc_advsearch_be.nameOverride }}
+
   {{- end }}
   {{- if .Values.simpl_catalogue_client.enabled }}    
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_catalogue_client.projectID }}/packages/helm/stable"
@@ -108,9 +163,17 @@ spec:
                 - catalogue-ui.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
           annotations:
             cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
-        {{- if .Values.simpl_catalogue_client.resources }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}            
+          {{- if .Values.simpl_catalogue_client.resources }}
         resources: {{- toYaml .Values.simpl_catalogue_client.resources | nindent 10 }}
+          {{- end }}
         {{- end }}
+
   {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.tier1_gateway.projectID }}/packages/helm/stable"
     path: ''
@@ -130,9 +193,16 @@ spec:
         keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
         usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         authenticationProviderUrl: http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
-        {{- if .Values.tier1_gateway.resources }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}
+          {{- if .Values.tier1_gateway.resources }}
         resources: {{- toYaml .Values.tier1_gateway.resources | nindent 10 }}
-        {{- end }}
+          {{- end }}
+        {{- end }}        
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.users_roles.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.users_roles.targetRevision }}
@@ -144,7 +214,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
+          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         authorityHostT2: tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}
@@ -185,9 +255,16 @@ spec:
               inbox:
                 topic:
                   pattern: iaa\.{{ .Values.cluster.namespace }}\..*
-        {{- if .Values.users_roles.resources }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}                  
+          {{- if .Values.users_roles.resources }}
         resources: {{- toYaml .Values.users_roles.resources | nindent 10 }}
-        {{- end }}
+          {{- end }}
+        {{- end }}        
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_fe.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.simpl_fe.targetRevision }}
@@ -212,8 +289,15 @@ spec:
           value: "participant"
         - name: KEYCLOAK_CLIENT_ID
           value: "frontend-cli"
-        {{- if .Values.simpl_fe.resources }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}  
+          {{- if .Values.simpl_fe.resources }}
         resources: {{- toYaml .Values.simpl_fe.resources | nindent 10 }}
+          {{- end }}
         {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.tier2_gateway.projectID }}/packages/helm/stable"
     path: ''
@@ -226,7 +310,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
+          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         env:
         - name: KAFKA_TIER2GW
@@ -260,8 +344,14 @@ spec:
             kafka:
               topic:
                 prefix: iaa.{{ .Values.cluster.namespace }}.
-        {{- if .Values.tier2_gateway.resources }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"                
+          {{- if .Values.tier2_gateway.resources }}
         resources: {{- toYaml .Values.tier2_gateway.resources | nindent 10 }}
+          {{- end }}
         {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.auth_provider.projectID }}/packages/helm/stable"
     path: ''
@@ -274,7 +364,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
+          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         urlAuthorityT2: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         db:
@@ -307,9 +397,17 @@ spec:
             kafka:
               topic:
                 prefix: iaa.{{ .Values.cluster.namespace }}.
-        {{- if .Values.auth_provider.resources }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}                
+          {{- if .Values.auth_provider.resources }}
         resources: {{- toYaml .Values.auth_provider.resources | nindent 10 }}
+          {{- end }}
         {{- end }}
+
   {{- if .Values.simpl_edc.enabled }}      
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_edc.projectID }}/packages/helm/stable"
     path: ''
@@ -326,25 +424,24 @@ spec:
           host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
-          vault:
-            url: {{ .Values.hashicorp.service }}
           callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"
         env:
           datasourceurl: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_edc"
         postgresql:
           username: {{ .Values.cluster.namespace }}_edc
-        tls:
-          url:
-            authority: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
-            usersRoles: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/credential/download"
-            authenticationProvider: "http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080/keypair"
         hashicorp:
           role: {{ .Values.hashicorp.role }}
-          service: {{ .Values.hashicorp.service }}
+          service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         secretEngine: {{ .Values.hashicorp.secretEngine }}
-        {{- if .Values.simpl_edc.resources }}
+                {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+          {{- if .Values.simpl_edc.resources }}
         resources: {{- toYaml .Values.simpl_edc.resources | nindent 10 }}
-        {{- end }}
+          {{- end }}
+        {{- end }}  
   {{- end }} 
   {{- if .Values.edc_connector_adapter.enabled }}      
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.edc_connector_adapter.projectID }}/packages/helm/stable"
@@ -366,8 +463,24 @@ spec:
             endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
         edcConnector:
           tier2BaseUrl: https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc
-        {{- if .Values.edc_connector_adapter.resources }}
+        kafka:
+          bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092 
+          topics:
+            transferProcess: contract_consumption.transfer-{{ .Values.cluster.namespace }}
+        vault:
+          secretEngine: {{ .Values.hashicorp.secretEngine }}
+          secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-edc-connector-adapter"
+          role: {{ .Values.hashicorp.role }}
+          service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}      
+          {{- if .Values.edc_connector_adapter.resources }}
         resources: {{- toYaml .Values.edc_connector_adapter.resources | nindent 10 }}
+          {{- end }}
         {{- end }}
   {{- end }}
   {{- if .Values.monitoring.enabled }}
@@ -386,24 +499,17 @@ spec:
         domainSuffix: {{ .Values.domainSuffix }}
         namespaceTag: {{ .Values.namespaceTag.consumer }}
         mainNamespace: {{ .Values.cluster.commonToolsNamespace }}
-        heartbeat:
-          services:
-            heartbeat.monitors:
-            - type: tcp
-              name: Elasticsearch Service
-              id: elasticsearch:9200
-              schedule: '@every 5s'
-              hosts: ["elastic-elasticsearch-es-http.{{ .Values.cluster.commonToolsNamespace }}.svc:9200"]
-            - type: tcp
-              name: Kibana GUI
-              id: kibana:443
-              schedule: '@every 5s'
-              hosts: ["kibana.{{ .Values.cluster.commonToolsNamespace }}.{{ .Values.domainSuffix }}:443"]
-            - type: icmp
-              id: kibana/icmp
-              name: Kibana ICMP
-              hosts: ["elastic-kibana-kb-http.{{ .Values.cluster.commonToolsNamespace }}.svc"]
-              schedule: '*/5 * * * * * *'
+        filebeat:
+          {{- if eq .Values.resourcePreset "low" }}
+          resources:
+            requests:
+              cpu: "0"
+              memory: "0"
+          {{- else }}
+            {{- if .Values.monitoring.resources.filebeat }}
+          resources: {{- toYaml .Values.monitoring.resources.filebeat | nindent 12 }}
+            {{- end }}
+          {{- end }}
   {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.contract.projectID }}/packages/helm/stable"
     path: ''
@@ -423,14 +529,25 @@ spec:
           kafka:
             bootstrapServer: http://kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
             clientUser: {{ .Values.cluster.namespace }}-contract
+            topics:
+              signContractRequest: sign-contract-req-{{ .Values.cluster.namespace }}
+              signContractResponse: sign-contract-resp-{{ .Values.cluster.namespace }}
+              statusUpdate: status-update-{{ .Values.cluster.namespace }}
           vault:
             hashicorp:
-              service: {{ .Values.hashicorp.service }}
+              service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
               secretEngine: {{ .Values.hashicorp.secretEngine }}
               role: {{ .Values.hashicorp.role }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"              
+        {{- else }}
           {{- if .Values.contract.resources }}
-          resources: {{- toYaml .Values.contract.resources | nindent 10 }}
+        resources: {{- toYaml .Values.contract.resources | nindent 10 }}
           {{- end }} 
+        {{- end }}
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.stubs.projectID }}/packages/helm/stable"
     path: ''
     targetRevision: {{ .Values.stubs.targetRevision }}
@@ -440,6 +557,17 @@ spec:
         {{- range .Values.stubs.valueFiles }}
         - $values/app-values/stubs/{{ . }}
         {{- end }}
+      values: |
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}
+          {{- if .Values.stubs.resources }}
+        resources: {{- toYaml .Values.stubs.resources | nindent 10 }}
+          {{- end }}
+        {{- end }}         
   {{- if .Values.contract_consumption_be.enabled }}      
   - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.contract_consumption_be.projectID }}/packages/helm/stable"
     path: ''
@@ -452,11 +580,22 @@ spec:
         {{- end }}
       values: |
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-        edcConsumer:
-          baseUrl: http://simpl-edc-service.{{ .Values.cluster.namespace }}.svc.cluster.local:29193
-        {{- if .Values.contract_consumption_be.resources }}
+        # edcConsumer:
+        #   baseUrl: http://simpl-edc-service.{{ .Values.cluster.namespace }}.svc.cluster.local:29193
+        connectorAdapter:
+          tier1Gateway:
+            url: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc-connector-adapter
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"              
+        {{- else }}
+          {{- if .Values.contract_consumption_be.resources }}
         resources: {{- toYaml .Values.contract_consumption_be.resources | nindent 10 }}
+          {{- end }}
         {{- end }}
+
         openapiConfig:
           servers: https://creation-wizard-api.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         openTelemetry:
@@ -467,39 +606,8 @@ spec:
           secretEngine: "{{ .Values.hashicorp.secretEngine }}"
           secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"
           role: "{{ .Values.hashicorp.role }}"
-          service: "{{ .Values.hashicorp.service }}"
+          service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         kafka:
           bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
       releaseName: {{ .Values.contract_consumption_be.nameOverride }}
   {{- end }}    
-  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.simpl_cli.projectID }}/packages/helm/stable"
-    path: ''
-    targetRevision: {{ .Values.simpl_cli.targetRevision }}
-    chart: {{ .Values.simpl_cli.chart_name }}
-    helm:
-      releaseName: {{ .Values.simpl_cli.fullnameOverride }}
-      valueFiles:
-        {{- range .Values.simpl_cli.valueFiles }}
-        - $values/app-values/simpl-cli/{{ . }}
-        {{- end }}
-      values: |
-        podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: {{ .Values.hashicorp.service }}
-          vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
-        initParticipant:
-          hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-          authorityHostT1: authority.be.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}
-          csr:
-            cn: tls.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-            o: {{ .Values.namespaceTag.consumer }}
-            ou: {{ .Values.namespaceTag.consumer }}
-          keycloak:
-            internalHost: "keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local"
-            url: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
-            master:
-              password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
-            authority:
-              password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.namespaceTag.authority }}-keycloak#admin
-          microservices:
-            usersRolesUrl: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/cli/userApi/v1/
-            authenticationProviderUrl: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/cli/authApi/v1/

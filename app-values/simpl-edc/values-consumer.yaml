@@ -1,9 +1,4 @@
 deployment:
-  containerApiPort: 29191
-  containerControlPort: 29192
-  containerManagementPort: 29193
-  containerProtocolPort: 29194
-  containerPublicPort: 29291
   label: consumer
 
 service:
@@ -20,6 +15,3 @@ ingress:
 env:
   edcParticipantId: "consumer"
   edcIdsId: "urn:connector:consumer"
-
-postgresql:
-  username: edc

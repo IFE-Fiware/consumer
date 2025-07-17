@@ -1,3 +1,5 @@
+agentType: consumer
+
 elasticsearch:
   count: 0
   

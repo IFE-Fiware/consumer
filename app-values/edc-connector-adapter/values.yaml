@@ -25,7 +25,19 @@ resources:
     cpu: "1000m"
     memory: "2Gi"
 
+profile: consumer
+
 edcConnector:
   # the participant id to be used as assigner in policies as expected by the EDC connector on contract negotiation
   participantId: consumer
   baseUrl: http://simpl-edc-service:29193
+  apiKey: apikey
+
+kafka:
+  consumer:
+    groupId: contract_consumption
+  auth:
+    type: SASL_PLAINTEXT
+  fatalIfBrokerNotAvailable: false
+
+appJarPath: "/home/simpluser/app.jar"

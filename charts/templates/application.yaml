@@ -9,6 +9,7 @@ spec:
     syncOptions:
       - ApplyOutOfSyncOnly=true
       - CreateNamespace=true
+      - ServerSideApply=true
   project: {{ .Values.project }}
   destination:
     server: {{ .Values.cluster.address }}
@@ -62,7 +63,7 @@ spec:
             - name: ARTIFACT
               value: keycloak-authenticator
             - name: URL
-              value: https://code.europa.eu/api/v4/projects/915/packages/maven/com/aruba/simpl/keycloak-authenticator/2.0.0/keycloak-authenticator-2.0.0.jar
+              value: https://code.europa.eu/api/v4/projects/915/packages/maven/com/aruba/simpl/keycloak-authenticator/2.1.0/keycloak-authenticator-2.1.0.jar
           args:
             - |
               curl -o /custom-spi/${ARTIFACT}.jar ${URL};
@@ -112,9 +113,9 @@ spec:
         {{- end }}
       values: |
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-        usersRoles:
-          tier1Gateway:
-            url: http://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/user-api
+        # usersRoles:
+        #   tier1Gateway:
+        #     url: http://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/user-api
         catalogueAdapter:
           tier2Gateway:
             url: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
@@ -375,7 +376,7 @@ spec:
         - name: KAFKA_AUTHPROVIDER
           value: "vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_authprovider"
         microservices:
-          usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
+          identityProviderUrl: http://identityProvider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         simpl:
           certificate:
             san: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
@@ -427,6 +428,7 @@ spec:
           callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"
         env:
           datasourceurl: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_edc"
+          edcParticipantId: {{ .Values.cluster.namespace }}
         postgresql:
           username: {{ .Values.cluster.namespace }}_edc
         hashicorp:

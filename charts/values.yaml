@@ -174,7 +174,7 @@ auth_provider:
 monitoring:
   enabled: true
   projectID: "828"
-  targetRevision: 0.1.15
+  targetRevision: 0.1.16
   chart_name: eck-monitoring
   fullnameOverride: elastic
   resources:

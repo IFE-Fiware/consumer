@@ -59,7 +59,7 @@ tier1_gateway:
 xfsc_advsearch_be:
   enabled: true
   projectID: "891"
-  targetRevision: 1.12.1
+  targetRevision: 1.12.0
   chart_name: xfsc-advsearch
   resources:
     requests:

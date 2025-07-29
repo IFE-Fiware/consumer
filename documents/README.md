@@ -31,8 +31,11 @@ This repo contains:
 ## Pre-Requisites
 
 ### Onboarding
-In the current version, the automatic onboarding process has already been implemented using: init-participant-job. 
-For this reason, manual onboarding activities are no longer necessary.
+
+In the current version, after the deployment process is complete, a manual onboarding deployment process is required. 
+
+The steps are described in the document:
+https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.2.x/ONBOARD.md
 
 ### Tools
 | Pre-Requisites      |     Version     | Description                                                                                                                                                                               |
@@ -238,10 +241,16 @@ At the end, all pods should be created correctly:
 <img src="images/consumer_ArgoCD01.png" alt="ArgoCD01" width="600"><BR>
 
 
+
 ## Additional steps
 
-In the current version, the automatic onboarding process has already been implemented using: init-participant-job.
-For this reason, manual onboarding activities are no longer necessary.
+
+### Onboarding
+
+In the current version, after the deployment process is complete, a manual onboarding deployment process is required. 
+
+The steps are described in the document:
+https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.2.x/ONBOARD.md
 
 ### Monitoring
 

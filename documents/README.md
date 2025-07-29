@@ -30,13 +30,6 @@ This repo contains:
 
 ## Pre-Requisites
 
-### Onboarding
-
-In the current version, after the deployment process is complete, a manual onboarding deployment process is required. 
-
-The steps are described in the document:
-https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.2.x/ONBOARD.md
-
 ### Tools
 | Pre-Requisites      |     Version     | Description                                                                                                                                                                               |
 |---------------------|:---------------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

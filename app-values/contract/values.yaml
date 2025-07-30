@@ -10,7 +10,7 @@ deployment:
     edc: 'http://simpl-edc-service:29191/api'
   vault:
     hashicorp:
-      secretConfigPath: "{{ .Values.deployment.vault.hashicorp.secretEngine }}/{{ .Release.Namespace }}-contract"
+      secretConfigPath: "{{ .Values.deployment.vault.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
 
 environment: default
 resources:

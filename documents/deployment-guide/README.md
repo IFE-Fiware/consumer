@@ -4,19 +4,18 @@ monitor# Consumer Agent
 * [Consumer Agent](#consumer-agent)
   * [Description](#description)
   * [Pre-Requisites](#pre-requisites)
-    * [Onboarding](#onboarding)
     * [Tools](#tools)
+    * [DNS entries](#dns-entries)    
   * [Deployment](#deployment)
     * [Preliminary tasks](#preliminary-tasks)
-      * [Create the Namespace](#create-the-namespace)
-      * [Verify the Namespace](#verify-the-namespace)
       * [Vault related tasks](#vault-related-tasks)
         * [Secret for EDC](#secret-for-edc)
     * [Deployment](#deployment)
       * [Deployment using ArgoCD](#deployment-using-argocd)
       * [Manual deployment](#manual-deployment)
         * [Files preparation](#files-preparation)
-        * [Deployment](#deployment)
+        * [Deployment](#deployment-1)
+    * [Verification of deployment](#verification-of-deployment)
   * [Additional steps](#additional-steps)
     * [Onboarding](#onboarding)
     * [Monitoring](#monitoring)
@@ -29,7 +28,7 @@ This repo contains:
 - a master helm chart allowing to deploy a **Consumer** agent using a single command.
 - templates of values.yaml files used inside *Integration* environment under `app-values` folder
 
-### Preliminary tasks
+## Pre-Requisites
 
 ### Tools
 | Pre-Requisites      |     Version     | Description                                                                                                                                                                               |

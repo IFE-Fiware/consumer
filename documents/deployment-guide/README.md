@@ -10,9 +10,8 @@ monitor# Consumer Agent
     * [Preliminary tasks](#preliminary-tasks)
       * [Vault related tasks](#vault-related-tasks)
         * [Secret for EDC](#secret-for-edc)
-    * [Deployment](#deployment)
-      * [Deployment using ArgoCD](#deployment-using-argocd)
-      * [Manual deployment](#manual-deployment)
+    * [Deployment using ArgoCD](#deployment-using-argocd)
+    * [Manual deployment](#manual-deployment)
         * [Files preparation](#files-preparation)
         * [Deployment](#deployment-1)
     * [Verification of deployment](#verification-of-deployment)
@@ -123,7 +122,7 @@ Create a key for Signer named "*consumer03*-simpl-edc" replacing "03" in "consum
 All the other necessary secrets are now created automatically with proper data.
 
 
-#### Deployment using ArgoCD
+### Deployment using ArgoCD
 
 You can easily deploy the agent using ArgoCD. All the values mentioned in the sections below you can input in ArgoCD deployment. The repoURL gets the package directly from code.europa.eu.
 targetRevision is the package version. 

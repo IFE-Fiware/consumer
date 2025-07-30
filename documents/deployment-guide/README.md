@@ -1,4 +1,4 @@
-monitor# Consumer Agent
+# Consumer Agent
 
 <!-- TOC -->
 * [Consumer Agent](#consumer-agent)

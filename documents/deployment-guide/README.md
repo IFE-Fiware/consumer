@@ -6,8 +6,8 @@ monitor# Consumer Agent
   * [Pre-Requisites](#pre-requisites)
     * [Onboarding](#onboarding)
     * [Tools](#tools)
-  * [Installation](#installation)
-    * [Prerequisites](#prerequisites)
+  * [Deployment](#deployment)
+    * [Preliminary tasks](#preliminary-tasks)
       * [Create the Namespace](#create-the-namespace)
       * [Verify the Namespace](#verify-the-namespace)
       * [Vault related tasks](#vault-related-tasks)
@@ -18,6 +18,7 @@ monitor# Consumer Agent
         * [Files preparation](#files-preparation)
         * [Deployment](#deployment)
   * [Additional steps](#additional-steps)
+    * [Onboarding](#onboarding)
     * [Monitoring](#monitoring)
 * [Troubleshooting](#troubleshooting)
 <!-- TOC -->
@@ -28,7 +29,7 @@ This repo contains:
 - a master helm chart allowing to deploy a **Consumer** agent using a single command.
 - templates of values.yaml files used inside *Integration* environment under `app-values` folder
 
-## Pre-Requisites
+### Preliminary tasks
 
 ### Tools
 | Pre-Requisites      |     Version     | Description                                                                                                                                                                               |
@@ -40,7 +41,7 @@ This repo contains:
 | cert-manager        | 1.15.x or newer | Used for automatic cert management. <br/> Other version *might* work but tests were performed using 1.15.x version. <br/> Image used: `quay.io/jetstack/cert-manager-controller:v1.15.3` |                                                                   |
 | argocd              | 2.11.x or newer | Used as GitOps tool . App of apps concept. <br/> Other version *might* work but tests were performed using 2.11.x version. <br/> Image used: `quay.io/argoproj/argocd:v2.11.3`            |
 
-## DNS entries 
+### DNS entries 
 
 | Entry Name | Entries |
 | ------------- | --------------------------------------------------------------------------------------------------- |
@@ -52,7 +53,9 @@ This repo contains:
 | simpl-ingress | participant.be.(namespace).int.simpl-europe.eu 
 | xfsc-advsearch-be | xfsc-advsearch-be.(namespace).int.simpl-europe.eu 
 
-## Installation
+## Deployment
+
+### Preliminary tasks
 
 #### Vault related tasks
 
@@ -120,7 +123,6 @@ Create a key for Signer named "*consumer03*-simpl-edc" replacing "03" in "consum
 
 All the other necessary secrets are now created automatically with proper data.
 
-### Deployment
 
 #### Deployment using ArgoCD
 
@@ -176,7 +178,7 @@ spec:
 
 ```
 
-#### Manual deployment
+### Manual deployment
 
 ##### Files preparation
 
@@ -212,7 +214,7 @@ monitoring:
   enabled: true                     # should monitoring be disabled
 ```
 
-##### Deployment
+#### Deployment
 
 After you have prepared the values file, you can start the deployment. 
 Use the command prompt. Proceed to the folder where you have the Chart.yaml file and execute the following command. The dot at the end is crucial - it points to current folder to look for the chart. 

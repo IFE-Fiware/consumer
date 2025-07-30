@@ -222,7 +222,7 @@ Now you can deploy the agent:
 `helm install consumer . `
 
 
-After starting the deployment synchronization process, the expected namespace will be created.
+After starting the deployment synchronization process, the expected applications in ArgoCD will be created.
 
 ### Verification of deployment
 

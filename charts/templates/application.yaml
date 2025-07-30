@@ -562,7 +562,7 @@ spec:
               service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
               secretEngine: {{ .Values.hashicorp.secretEngine }}
               role: {{ .Values.hashicorp.role }}
-              secretConfigPath: "{{ .Values.deployment.vault.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
+              secretConfigPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
         {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:

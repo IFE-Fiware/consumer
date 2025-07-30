@@ -180,9 +180,9 @@ spec:
 
 ### Manual deployment
 
-##### Files preparation
-
 Another way for deployment, is to unpack the released package to a folder on a host where you have kubectl and helm available and configured. 
+
+##### Files preparation
 
 There is basically one file that you need to modify - values.yaml. 
 There are a couple of variables you need to replace - described below. The rest you don't need to change.
@@ -226,6 +226,7 @@ Now you can deploy the agent:
 
 After starting the deployment synchronization process, the expected namespace will be created.
 
+### Verification of deployment
 
 Initially, the status observed e.g. in ArgoCD will indicate the creation of new pods.
 
@@ -234,7 +235,6 @@ Be patient!... Depending on the configuration, this step can take up to 30 minut
 At the end, all pods should be created correctly:
 
 <img src="images/consumer_ArgoCD01.png" alt="ArgoCD01" width="600"><BR>
-
 
 
 ## Additional steps

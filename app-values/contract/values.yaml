@@ -8,9 +8,6 @@ deployment:
   urls:
     stubs: 'http://simpl-stubs:8080'
     edc: 'http://simpl-edc-service:29191/api'
-  # vault:
-  #   hashicorp:
-  #     secretConfigPath: "{{ .Values.deployment.vault.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
 
 environment: default
 resources:

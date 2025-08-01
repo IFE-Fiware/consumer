@@ -137,9 +137,6 @@ spec:
         {{- end }}
       values: |
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-        # usersRoles:
-        #   tier1Gateway:
-        #     url: http://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/user-api
         catalogueAdapter:
           tier2Gateway:
             url: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
@@ -339,10 +336,6 @@ spec:
           value: "vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_tier2gw"
         cors:
             allowOrigin: https://authority.fe.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }},https://authority.be.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
-        # microservices:
-        #   usersRolesUrl: http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
-        #   keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
-        #   authenticationProviderUrl: http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         kafka:
           bootstrap-servers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092   
         hostT2: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"

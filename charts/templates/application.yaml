@@ -61,13 +61,13 @@ spec:
         fullnameOverride: {{ .Values.redis_commander.nameOverride }}
         ingress:
           hosts:
-          - host: redis-commander.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+          - host: redis-commander.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
             paths:
               - "/"
           tls:
           - secretName: redis-commander-tls
             hosts:
-              - redis-commander.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+              - redis-commander.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
           annotations:
             cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
         {{- if eq .Values.resourcePreset "low" }}

@@ -61,8 +61,8 @@ spec:
         fullnameOverride: {{ .Values.redis_commander.nameOverride }}
         ingress:
           hosts:
-          # - host: redis-commander.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-          - host: redis-commander.test.{{ .Values.domainSuffix }}
+          - host: redis-commander.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+          # - host: redis-commander.test.{{ .Values.domainSuffix }}
             paths:
               - "/"
           tls:

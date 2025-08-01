@@ -39,6 +39,22 @@ redis:
   valueFiles:
     - values.yaml
 
+redis_commander:
+  enabled: true
+  repo_URL: 'https://github.com/joeferner/redis-commander.git'
+  targetRevision: master
+  nameOverride: redis-commander
+  path: 'k8s/helm-chart/redis-commander'
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  valueFiles:
+    - values.yaml
+
 keycloak:
   repo_URL: https://charts.bitnami.com/bitnami
   chart_name: keycloak

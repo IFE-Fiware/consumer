@@ -130,7 +130,7 @@ targetRevision is the package version.
 
 In the example below, please replace the marked versions with the ones applicable to your environment.
 
-Please pay special attention to the namespace names: common03, authority03, consumer03 and dataprovider03, and also to replace the domain name testint.simpl-europe.eu and the occurrence of the testint value itself.
+Please pay special attention to the namespace names: common03, authority03, consumer03 and dataprovider03 and replace them with yours, as well as replace the domain name testint.simpl-europe.eu and the occurrence of the value testint itself.
 
 ```
 apiVersion: argoproj.io/v1alpha1

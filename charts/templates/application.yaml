@@ -28,7 +28,12 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.redis.nameOverride }}
+        auth:
+          password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-redis#redis
         master:
+          podAnnotations:
+            vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+            vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
           {{- if .Values.redis.resourcesPreset }}
           resourcesPreset: {{ .Values.redis.resourcesPreset }}
           {{- end }}
@@ -42,6 +47,40 @@ spec:
           resources: {{- toYaml .Values.redis.resources | nindent 10 }}
             {{- end }}
           {{- end }}
+  {{- if .Values.redis_commander.enabled }}
+  - repoURL: {{ .Values.redis_commander.repo_URL }}
+    targetRevision: {{ .Values.redis_commander.targetRevision }}
+    path: {{.Values.redis_commander.path}}
+    chart: {{ .Values.redis_commander.chart_name }}
+    helm:
+      valueFiles:
+        {{- range .Values.redis_commander.valueFiles }}
+        - $values/app-values/Redis_commander/{{ . }}
+        {{- end }}
+      values: |
+        fullnameOverride: {{ .Values.redis_commander.nameOverride }}
+        ingress:
+          hosts:
+          - host: redis-commander.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+            paths:
+              - "/"
+          tls:
+          - secretName: redis-commander-tls
+            hosts:
+              - redis-commander.{{ .Values.namespaceTag.dataprovider }}.{{ .Values.domainSuffix }}
+          annotations:
+            cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
+        {{- if eq .Values.resourcePreset "low" }}
+        resources:
+          requests:
+            cpu: "0"
+            memory: "0"
+        {{- else }}
+          {{- if .Values.redis_commander.resources }}
+        resources: {{- toYaml .Values.redis_commander.resources | nindent 10 }}
+          {{- end }}
+        {{- end }}
+  {{- end }}
   - repoURL: {{ .Values.keycloak.repo_URL }}
     targetRevision: {{ .Values.keycloak.targetRevision }}
     chart: {{ .Values.keycloak.chart_name }}

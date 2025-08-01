@@ -62,7 +62,6 @@ spec:
         ingress:
           hosts:
           - host: redis-commander.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-          # - host: redis-commander.test.{{ .Values.domainSuffix }}
             paths:
               - "/"
           tls:

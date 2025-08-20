@@ -58,7 +58,7 @@ redis_commander:
 keycloak:
   repo_URL: https://charts.bitnami.com/bitnami
   chart_name: keycloak
-  targetRevision: 22.2.5
+  targetRevision: 25.1.1
   nameOverride: keycloak
   resourcesPreset: "none"
   resources:

@@ -248,7 +248,7 @@ spec:
       values: |
         hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         cors:
-          allowOrigin: https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+          allowOrigin: https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
         ingress:
           issuer: {{ .Values.cluster.issuer }}
         keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local

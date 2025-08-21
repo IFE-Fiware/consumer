@@ -477,6 +477,7 @@ spec:
       values: |
         ingress:
           host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+          clusterIssuer: {{ .Values.cluster.issuer }}
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
           callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"

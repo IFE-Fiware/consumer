@@ -148,7 +148,7 @@ tier2_gateway:
 simpl_edc:
   enabled: true
   projectID: "920"
-  targetRevision: 1.0.8
+  targetRevision: 1.0.10
   chart_name: edc
   nameOverride: simpl-edc
   resources:

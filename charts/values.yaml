@@ -1,6 +1,6 @@
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
-  branch: v2.1.1
+  branch: v2.1.2
 
 project: ${PROJECT}
 domainSuffix: ${DOMAINSUFFIX}
@@ -119,7 +119,7 @@ tier2_gateway:
 simpl_edc:
   enabled: true
   projectID: "920"
-  targetRevision: 1.0.7
+  targetRevision: 1.0.10
   chart_name: edc
   nameOverride: simpl-edc
   resources:

@@ -30,4 +30,4 @@ openTelemetry:
 
 connectorAdapter:
   service:
-    url: http://edc-connector-adapter
+    url: http://edc-connector-adapter:8080

@@ -28,3 +28,6 @@ openTelemetry:
   # context propagation type
   propagators: tracecontext
 
+connectorAdapter:
+  service:
+    url: http://edc-connector-adapter

@@ -173,6 +173,8 @@ spec:
         - $values/app-values/xfsc-advsearch-be/{{ . }}
         {{- end }}
       values: |
+        ingress:
+          enabled: false
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         catalogueAdapter:
           tier2Gateway:
@@ -485,8 +487,9 @@ spec:
         {{- end }}
       values: |
         ingress:
-          host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-          clusterIssuer: {{ .Values.cluster.issuer }}
+          # host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+          # clusterIssuer: {{ .Values.cluster.issuer }}
+          enabled: false
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
           callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"
@@ -521,6 +524,8 @@ spec:
         - $values/app-values/edc-connector-adapter/{{ . }}
         {{- end }}
       values: |
+        ingress:
+          enabled: false
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         openapiConfig:
           servers: https://edc-connector-adapter.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
@@ -646,6 +651,8 @@ spec:
         - $values/app-values/contract-consumption-be/{{ . }}
         {{- end }}
       values: |
+        ingress:
+          enabled: false
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         # edcConsumer:
         #   baseUrl: http://simpl-edc-service.{{ .Values.cluster.namespace }}.svc.cluster.local:29193

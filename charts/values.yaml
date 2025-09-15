@@ -145,6 +145,20 @@ tier2_gateway:
     - values.yaml
     - values-routes.yaml
 
+tier2_proxy:
+  projectID: "1112"
+  targetRevision: 1.0.1
+  chart_name: tier2-proxy
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "500Mi"
+    limits:
+      cpu: "500m"
+      memory: "500Mi"
+
+
+
 simpl_edc:
   enabled: true
   projectID: "920"

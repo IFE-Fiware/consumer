@@ -57,7 +57,7 @@ This repo contains:
 
 #### Vault related tasks
 
-You can access vault on https://vault.**commonnamespacetag**.**domainsuffix**
+You can access vault on https://secrets.**commonnamespacetag**.**domainsuffix**
 Root token can be found in common namespace, secret vault-unseal-keys, in key vault-root. 
 
 The description of using vault is in a separate document:

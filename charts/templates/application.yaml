@@ -30,7 +30,7 @@ spec:
         fullnameOverride: {{ .Values.redis.nameOverride }}
         master:
           podAnnotations:
-            vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+            vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
             vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
           {{- if .Values.redis.resourcesPreset }}
           resourcesPreset: {{ .Values.redis.resourcesPreset }}
@@ -91,7 +91,7 @@ spec:
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
         apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         auth:
           adminPassword: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
@@ -275,7 +275,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         authorityHostT2: tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}
@@ -368,7 +368,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         env:
         - name: KAFKA_TIER2GW
@@ -421,7 +421,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
         urlAuthorityT2: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         db:
@@ -500,7 +500,7 @@ spec:
           username: {{ .Values.cluster.namespace }}_edc
         hashicorp:
           role: {{ .Values.hashicorp.role }}
-          service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         secretEngine: {{ .Values.hashicorp.secretEngine }}
                 {{- if eq .Values.resourcePreset "low" }}
         resources:
@@ -542,7 +542,7 @@ spec:
           secretEngine: {{ .Values.hashicorp.secretEngine }}
           secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-edc-connector-adapter"
           role: {{ .Values.hashicorp.role }}
-          service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:
@@ -606,7 +606,7 @@ spec:
               statusUpdate: status-update-{{ .Values.cluster.namespace }}
           vault:
             hashicorp:
-              service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+              service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
               secretEngine: {{ .Values.hashicorp.secretEngine }}
               role: {{ .Values.hashicorp.role }}
               secretConfigPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
@@ -680,7 +680,7 @@ spec:
           secretEngine: "{{ .Values.hashicorp.secretEngine }}"
           secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"
           role: "{{ .Values.hashicorp.role }}"
-          service: "https://vault.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         kafka:
           bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
       releaseName: {{ .Values.contract_consumption_be.nameOverride }}

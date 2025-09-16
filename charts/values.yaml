@@ -245,7 +245,7 @@ contract:
 
 stubs:
   projectID: "930"
-  targetRevision: 2.0.1
+  targetRevision: 2.0.2
   chart_name: simpl-stubs
   valueFiles:
     - values.yaml  

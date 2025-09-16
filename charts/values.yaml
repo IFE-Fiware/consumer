@@ -88,7 +88,7 @@ tier1_gateway:
 xfsc_advsearch_be:
   enabled: true
   projectID: "891"
-  targetRevision: 1.12.0-579.hotfix.3c5e040e
+  targetRevision: 1.14.1
   chart_name: xfsc-advsearch
   resources:
     requests:
@@ -179,7 +179,7 @@ simpl_edc:
 edc_connector_adapter:
   enabled:  true
   projectID: "1091"
-  targetRevision: 1.4.0-231.hotfix.c0e7f132
+  targetRevision: 1.6.0
   chart_name: edc-connector-adapter
   nameOverride: edc-connector-adapter
   valueFiles:
@@ -253,7 +253,7 @@ stubs:
 contract_consumption_be:
   enabled: true
   projectID: "968"
-  targetRevision: 1.9.0-526.hotfix.db0da15a
+  targetRevision: 1.11.0
   chart_name: contract-consumption-be
   nameOverride: contract-consumption-be
   valueFiles:

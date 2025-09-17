@@ -619,7 +619,7 @@ spec:
             user: {{ .Values.cluster.namespace }}_contract
           kafka:
             bootstrapServer: http://kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
-            clientUser: {{ .Values.cluster.namespace }}-contract
+            clientUser: {{ .Values.cluster.namespace }}_contract
             topics:
               signContractRequest: sign-contract-req-{{ .Values.cluster.namespace }}
               signContractResponse: sign-contract-resp-{{ .Values.cluster.namespace }}

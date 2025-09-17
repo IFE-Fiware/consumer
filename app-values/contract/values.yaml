@@ -18,7 +18,3 @@ resources:
     memory: "700Mi"
     cpu: "300m"
 
-probe:
-  endpoint: "/contract/v1/health"
-  scheme: HTTP
-  port: 8080

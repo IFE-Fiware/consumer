@@ -19,6 +19,6 @@ resources:
     cpu: "300m"
 
 probe:
-  endpoint: "/actuator/health"
+  endpoint: "/contract/v1/health"
   scheme: HTTP
   port: 8080

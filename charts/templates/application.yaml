@@ -624,6 +624,9 @@ spec:
               signContractRequest: sign-contract-req-{{ .Values.cluster.namespace }}
               signContractResponse: sign-contract-resp-{{ .Values.cluster.namespace }}
               statusUpdate: status-update-{{ .Values.cluster.namespace }}
+          openTelemetry:
+            otlpExporter:
+              endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
           vault:
             hashicorp:
               service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"

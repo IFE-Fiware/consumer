@@ -622,8 +622,11 @@ spec:
             clientUser: {{ .Values.cluster.namespace }}_contract
             topics:
               signContractRequest: sign-contract-req-{{ .Values.cluster.namespace }}
+              signContractRequestDLT: sign-contract-req-dlt-{{ .Values.cluster.namespace }}
               signContractResponse: sign-contract-resp-{{ .Values.cluster.namespace }}
+              signContractResponseDLT: sign-contract-resp-dlt-{{ .Values.cluster.namespace }}
               statusUpdate: status-update-{{ .Values.cluster.namespace }}
+              statusUpdateDLT: status-update-dlt-{{ .Values.cluster.namespace }}
           openTelemetry:
             otlpExporter:
               endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}

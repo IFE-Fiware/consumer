@@ -627,9 +627,8 @@ spec:
               signContractResponseDLT: sign-contract-resp-dlt-{{ .Values.cluster.namespace }}
               statusUpdate: status-update-{{ .Values.cluster.namespace }}
               statusUpdateDLT: status-update-dlt-{{ .Values.cluster.namespace }}
-          openTelemetry:
-            otlpExporter:
-              endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
+          otel:
+            endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
           vault:
             hashicorp:
               service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"

@@ -202,7 +202,7 @@ simpl_catalogue_client:
 
 auth_provider:
   projectID: "939"
-  targetRevision: 2.4.0
+  targetRevision: 2.4.1
   chart_name: authentication-provider
   resources:
     requests:

@@ -71,6 +71,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Authentication Provider
 
+#### 2.4.1 (2025-09-18)
+No changes.
+
 #### 2.4.0 (2025-09-08)
 
 #### Added

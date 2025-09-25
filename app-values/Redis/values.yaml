@@ -18,3 +18,8 @@ secretAnnotations:
 auth:
   existingSecret: redis-secrets
   existingSecretPasswordKey: redis
+
+image:
+  repository: bitnamilegacy/redis
+security:
+  allowInsecureImages: true

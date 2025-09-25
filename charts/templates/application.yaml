@@ -27,10 +27,10 @@ spec:
         - $values/app-values/Redis/{{ . }}
         {{- end }}
       values: |
-        image:
-          repository: bitnamilegacy/redis
-        security:
-          allowInsecureImages: true
+        # image:
+        #   repository: bitnamilegacy/redis
+        # security:
+        #   allowInsecureImages: true
         fullnameOverride: {{ .Values.redis.nameOverride }}
         master:
           podAnnotations:
@@ -92,10 +92,10 @@ spec:
         - $values/app-values/Keycloak/{{ . }}
         {{- end }}
       values: |
-        image:
-          repository: bitnamilegacy/keycloak
-        security:
-          allowInsecureImages: true
+        # image:
+        #   repository: bitnamilegacy/keycloak
+        # security:
+        #   allowInsecureImages: true
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
         apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         podAnnotations:

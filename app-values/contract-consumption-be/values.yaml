@@ -31,3 +31,9 @@ openTelemetry:
 connectorAdapter:
   service:
     url: http://edc-connector-adapter:8080
+
+# configuration for connectivity between Contract-Consumption-Be and Validation
+validation:
+  config:
+    enabled: false
+    

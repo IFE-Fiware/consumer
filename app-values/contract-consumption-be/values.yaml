@@ -36,4 +36,4 @@ connectorAdapter:
 validation:
   config:
     enabled: false
-    
+    domain: "http://sd-validation:8080"

@@ -251,7 +251,7 @@ stubs:
     - values.yaml  
 
 contract_consumption_be:
-  enabled: true
+  enabled: false
   projectID: "968"
   targetRevision: 1.11.0
   chart_name: contract-consumption-be

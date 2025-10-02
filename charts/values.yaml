@@ -230,7 +230,7 @@ monitoring:
 
 contract:
   projectID: "872"
-  targetRevision: 2.0.8
+  targetRevision: 2.0.9
   chart_name: simpl-contract
   resources:
     requests:

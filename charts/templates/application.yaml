@@ -511,9 +511,9 @@ spec:
         {{- end }}
       values: |
         ingress:
-          # host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-          # clusterIssuer: {{ .Values.cluster.issuer }}
-          enabled: false
+          host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+          clusterIssuer: {{ .Values.cluster.issuer }}
+          enabled: true
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
           callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"

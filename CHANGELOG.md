@@ -151,6 +151,9 @@ No changes.
 
 ### Contract Manager
 
+#### 2.0.9 (2025-10-02)
+No changes.
+
 #### 2.0.6 (2025-09-03)
 
 #### Changed

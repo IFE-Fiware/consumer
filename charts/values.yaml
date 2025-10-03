@@ -188,7 +188,7 @@ edc_connector_adapter:
 simpl_catalogue_client:
   enabled: true
   projectID: "937"
-  targetRevision: 1.2.5
+  targetRevision: 1.2.6
   chart_name: catalogue-ui
   resources:
     requests:

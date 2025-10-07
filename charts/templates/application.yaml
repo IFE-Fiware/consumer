@@ -31,7 +31,7 @@ spec:
         master:
           podAnnotations:
             vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
-            vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
+            vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
           {{- if .Values.redis.resourcesPreset }}
           resourcesPreset: {{ .Values.redis.resourcesPreset }}
           {{- end }}
@@ -92,14 +92,14 @@ spec:
         apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
-          vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
+          vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
         auth:
-          adminPassword: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
+          adminPassword: vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
         externalDatabase:
           host: "pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local"
           database: {{ .Values.namespaceTag.consumer }}_keycloak
           user: {{ .Values.namespaceTag.consumer }}_keycloak
-          password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-keycloak
+          password: vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-keycloak
         extraEnvVars:
         - name: KC_HOSTNAME_ADMIN
           value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
@@ -276,7 +276,7 @@ spec:
       values: |
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
-          vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
+          vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
         hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         authorityHostT2: tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}
         global:
@@ -284,14 +284,14 @@ spec:
             issuer: {{ .Values.cluster.issuer }}
         keycloak:
           master:
-            password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
+            password: vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
         db:
           url: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_usersroles"
           username: {{ .Values.namespaceTag.consumer }}_usersroles
-          password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-usersroles
+          password: vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-usersroles
         env:
         - name: KAFKA_USERSROLES
-          value: "vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_usersroles"
+          value: "vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_usersroles"
         microservices:
           authenticationProviderUrl: http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         kafkaConfig:
@@ -369,10 +369,10 @@ spec:
       values: |
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
-          vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
+          vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
         env:
         - name: KAFKA_TIER2GW
-          value: "vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_tier2gw"
+          value: "vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_tier2gw"
         - name: SPRING_DATA_REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -442,15 +442,15 @@ spec:
       values: |
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
-          vault.security.banzaicloud.io/vault-role: {{ .Values.hashicorp.role }}
+          vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
         urlAuthorityT2: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         db:
           url: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_authenticationprovider"
           username: {{ .Values.namespaceTag.consumer }}_authenticationprovider
-          password: vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-authenticationprovider
+          password: vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-authenticationprovider
         env:
         - name: KAFKA_AUTHPROVIDER
-          value: "vault:{{ .Values.hashicorp.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_authprovider"
+          value: "vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.commonToolsNamespace }}-kafka-credentials#{{ .Values.cluster.namespace }}_authprovider"
         - name: SPRING_DATA_REDIS_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -519,9 +519,9 @@ spec:
         postgresql:
           username: {{ .Values.cluster.namespace }}_edc
         hashicorp:
-          role: {{ .Values.hashicorp.role }}
+          role: {{ .Values.secrets.role }}
           service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
-        secretEngine: {{ .Values.hashicorp.secretEngine }}
+        secretEngine: {{ .Values.secrets.secretEngine }}
                 {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:
@@ -559,9 +559,9 @@ spec:
           topics:
             transferProcess: contract_consumption.transfer-{{ .Values.cluster.namespace }}
         vault:
-          secretEngine: {{ .Values.hashicorp.secretEngine }}
-          secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-edc-connector-adapter"
-          role: {{ .Values.hashicorp.role }}
+          secretEngine: {{ .Values.secrets.secretEngine }}
+          secretPath: "{{ .Values.secrets.secretEngine }}/{{ .Values.cluster.namespace }}-edc-connector-adapter"
+          role: {{ .Values.secrets.role }}
           service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         {{- if eq .Values.resourcePreset "low" }}
         resources:
@@ -632,9 +632,9 @@ spec:
           vault:
             hashicorp:
               service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
-              secretEngine: {{ .Values.hashicorp.secretEngine }}
-              role: {{ .Values.hashicorp.role }}
-              secretConfigPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
+              secretEngine: {{ .Values.secrets.secretEngine }}
+              role: {{ .Values.secrets.role }}
+              secretConfigPath: "{{ .Values.secrets.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
         {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:
@@ -699,9 +699,9 @@ spec:
           otlpExporter:
             endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
         vault:
-          secretEngine: "{{ .Values.hashicorp.secretEngine }}"
-          secretPath: "{{ .Values.hashicorp.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"
-          role: "{{ .Values.hashicorp.role }}"
+          secretEngine: "{{ .Values.secrets.secretEngine }}"
+          secretPath: "{{ .Values.secrets.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"
+          role: "{{ .Values.secrets.role }}"
           service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         kafka:
           bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092

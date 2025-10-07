@@ -22,7 +22,7 @@ cluster:
   commonToolsNamespace: ${COMMONNAMESPACE}
   issuer: ${CLUSTERISSUER}
 
-hashicorp:
+secrets:
   secretEngine: ${SECRETENGINE}
   role: ${SECRETROLE}
 

@@ -683,8 +683,6 @@ spec:
         ingress:
           enabled: false
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-        # edcConsumer:
-        #   baseUrl: http://simpl-edc-service.{{ .Values.cluster.namespace }}.svc.cluster.local:29193
         connectorAdapter:
           tier1Gateway:
             url: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc-connector-adapter
@@ -703,7 +701,6 @@ spec:
           servers: https://creation-wizard-api.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         openTelemetry:
           otlpExporter:
-          # collector endpoint for the OTLP exporter
             endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
         vault:
           secretEngine: "{{ .Values.hashicorp.secretEngine }}"

@@ -58,7 +58,7 @@ This repo contains:
 #### Vault related tasks
 
 You can access vault on https://secrets.**commonnamespacetag**.**domainsuffix**
-Root token can be found in common namespace, secret vault-unseal-keys, in key vault-root. 
+Root token can be found in common namespace, secret secrets-root-token, in key token. 
 
 The description of using vault is in a separate document:
 
@@ -67,60 +67,20 @@ https://code.europa.eu/simpl/simpl-open/development/agents/common_components/-/b
 Before you proceed with the next steps related to accessing your Vault and changing its contents, please read the document above.<BR>
 <BR>
 
+##### Secret for simpl-edc
+Edit the key for Infrastructure-be named "*consumer03*-simpl-edc" replacing "03" in "consumer03" with the appropriate entry and the data mentioned in the table with proper values.
 
-##### Secret for EDC
-
-Create a key for Signer named "*consumer03*-simpl-edc" replacing "03" in "consumer03" with the appropriate entry and the data mentioned in the table with proper values. 
-
-```
-{
-  "contractmanager_apikey": "apikey",
-  "edc_datasource_default_password": "edc",
-  "edc_datasource_policy_password": "edc",
-  "edc_ionos_access_key": "accesskeystring",
-  "edc_ionos_endpoint": "s3-eu-central-1.ionoscloud.com",
-  "edc_ionos_endpoint_region": "de",
-  "edc_ionos_secret_key": "secretkeystring",
-  "edc_ionos_token": "tokenstring",
-  "otel_experimental_log_level": "debug",
-  "otel_exporter_otlp_endpoint": "http://collector.commonns.domainsuffix",
-  "otel_exporter_otlp_protocol": "http/protobuf",
-  "otel_instrumentation_http_url_connection_enabled": "false",
-  "otel_instrumentation_jdbc_enabled": "false",
-  "otel_instrumentation_jersey_enabled": "false",
-  "otel_instrumentation_servlet_enabled": "false",
-  "otel_logs_exporter": "none",
-  "otel_metrics_exporter": "none",
-  "otel_resource_attributes": "service.name=edc,deployment.environment=namespace",
-  "otel_traces_exporter": "otlp"
-}
-```
+You need to modify:
 
 | Variable name                    |     Example         | Description              |
 | ----------------------           |     :-----:         | ---------------          |
-| contractmanager_apikey           | apikey              | api key string           |
-| edc_datasource_default_password  | dbpassstring        | take the password from *consumer03*-postgres-passwords vault secret, key *consumer03*-edc |
-| edc_datasource_policy_password   | dbpassstring        | take the password from *consumer03*-postgres-passwords vault secret, key *consumer03*-edc |
 | edc_ionos_access_key             | accesskeystring     | Access key for S3 - please contact IONOS to get the correct value. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com |
 | edc_ionos_endpoint               | s3-eu-central-1.ionoscloud.com | S3 server url |
 | edc_ionos_endpoint_region        | de                  | Two letter country code  |
 | edc_ionos_secret_key             | secretkeystring     | Secret key for S3 - please contact IONOS to get the correct value. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com |
 | edc_ionos_token                  | tokenstring         | Token for S3 access - please contact IONOS to get the correct value. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com |
-| otel_experimental_log_level      | debug  | log level of otel |
-| otel_exporter_otlp_endpoint      | http://collector.commonns.domainsuffix  | replace commonns and domainsuffix with your common namespace and domain suffix |
-| otel_exporter_otlp_protocol      | http/protobuf       | default value |
-| otel_instrumentation_http_url_connection_enabled | false  | enable http url connection logging for otel |
-| otel_instrumentation_jdbc_enabled | false              | enable jdbc logging for otel |
-| otel_instrumentation_jersey_enabled | false            | enable jersey logging for otel |
-| otel_instrumentation_servlet_enabled | false           | enable servlet logging for otel |
-| otel_logs_exporter               | none                | enable logs exporter |
-| otel_metrics_exporter            | none                | enable metric expoerter |
-| otel_resource_attributes         | service.name=edc,deployment.environment=namespace  | replace namespace with your agent namespace |
-| otel_traces_exporter             | otlp                | enable traces exporter |
-
 
 All the other necessary secrets are now created automatically with proper data.
-
 
 ### Deployment using ArgoCD
 

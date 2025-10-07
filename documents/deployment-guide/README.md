@@ -62,7 +62,7 @@ Root token can be found in common namespace, secret vault-unseal-keys, in key va
 
 The description of using vault is in a separate document:
 
-https://code.europa.eu/simpl/simpl-open/development/agents/common_components/-/blob/feature/documentation_verification/documents/Using_Vault.md
+https://code.europa.eu/simpl/simpl-open/development/agents/common_components/-/blob/main/documents/Using_Vault.md
 
 Before you proceed with the next steps related to accessing your Vault and changing its contents, please read the document above.<BR>
 <BR>
@@ -164,7 +164,7 @@ spec:
           issuer: dev-prod                  # certificate issuer
         authority:
           namespaceTag: authority03         # namespace tag of target authority
-        hashicorp:
+        secrets:
           secretEngine: test-int            # secret engine name created in vault
           role: test-int-role               # role created in vault for access
         monitoring:
@@ -205,7 +205,7 @@ cluster:
   issuer: dev-prod                  # certificate issuer
 authority:
   namespaceTag: authority03         # namespace tag of target authority
-hashicorp:
+secrets:
   secretEngine: test-int            # secret engine name created in vault
   role: test-int-role               # role created in vault for access
 monitoring:

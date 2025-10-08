@@ -14,7 +14,7 @@
       - [Deployment using ArgoCD](#deployment-using-argocd)
       - [Manual deployment](#manual-deployment)
         - [Files preparation](#files-preparation)
-        - [Deployment](#deployment)
+        - [Deployment](#deployment-1)
   - [Additional steps](#additional-steps)
     - [Monitoring](#monitoring)
 - [Troubleshooting](#troubleshooting)
@@ -70,7 +70,7 @@ The description of using vault is in a separate document:
 
 Before you proceed with the next steps related to accessing your Vault and changing its contents, please read the document above.<BR>
 
-#### Secret for simpl-edc
+#### Secret for EDC
 
 Edit the key for Infrastructure-be named "*consumer01*-simpl-edc" replacing "01" in "consumer01" with the appropriate entry and the data mentioned in the table with proper values.
 

@@ -70,7 +70,7 @@ The description of using vault is in a separate document:
 
 Before you proceed with the next steps related to accessing your Vault and changing its contents, please read the document above.<BR>
 
-##### Secret for simpl-edc
+#### Secret for simpl-edc
 
 Edit the key for Infrastructure-be named "*consumer01*-simpl-edc" replacing "01" in "consumer01" with the appropriate entry and the data mentioned in the table with proper values.
 
@@ -198,9 +198,6 @@ At the end, all pods should be created correctly:
 
 
 ## Additional steps
-
-
-### Onboarding
 
 In the current version, after the deployment process is complete, a manual onboarding deployment process is required. 
 

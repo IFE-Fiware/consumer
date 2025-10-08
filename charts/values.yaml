@@ -210,7 +210,7 @@ auth_provider:
       memory: "500Mi"
     limits:
       cpu: "500m"
-      memory: "500Mi" 
+      memory: "1Gi" 
   valueFiles:
     - values.yaml
 

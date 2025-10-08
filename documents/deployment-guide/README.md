@@ -66,7 +66,7 @@ Root token can be found in common namespace, secret secrets-root-token, in key t
 
 The description of using vault is in a separate document:
 
-<https://code.europa.eu/simpl/simpl-open/development/agents/common_components/-/blob/main/documents/Using_Vault.md>
+<https://code.europa.eu/simpl/simpl-open/development/agents/common_components/-/blob/main/documents/user-manual/Using_Vault.md>
 
 Before you proceed with the next steps related to accessing your Vault and changing its contents, please read the document above.<BR>
 

@@ -127,8 +127,6 @@ spec:
           namespace: consumer01             # where the app will be deployed
           commonToolsNamespace: common01    # namespace where main monitoring stack is deployed
           issuer: dev-prod                  # certificate issuer
-        authority:
-          namespaceTag: authority01         # namespace tag of target authority
         secrets:
           secretEngine: example             # secret engine name created in vault
           role: example-role                # role created in vault for access
@@ -168,8 +166,6 @@ cluster:
   namespace: consumer01             # where the app will be deployed
   commonToolsNamespace: common01    # namespace where main monitoring stack is deployed
   issuer: dev-prod                  # certificate issuer
-authority:
-  namespaceTag: authority01         # namespace tag of target authority
 secrets:
   secretEngine: example             # secret engine name created in vault
   role: example-role                # role created in vault for access

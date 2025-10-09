@@ -6,15 +6,16 @@
   - [Pre-Requisites](#pre-requisites)
     - [Onboarding](#onboarding)
     - [Tools](#tools)
-  - [DNS entries](#dns-entries)
-  - [Installation](#installation)
-    - [Vault related tasks](#vault-related-tasks)
-      - [Secret for EDC](#secret-for-edc)
-    - [Deployment](#deployment)
-      - [Deployment using ArgoCD](#deployment-using-argocd)
-      - [Manual deployment](#manual-deployment)
-        - [Files preparation](#files-preparation)
-        - [Deployment](#deployment-1)
+    - [DNS entries](#dns-entries)
+  - [Deployment](#deployment)
+    - [Preliminary tasks](#preliminary-tasks)
+      - [Vault related tasks](#vault-related-tasks)
+        - [Secret for EDC](#secret-for-edc)
+    - [Deployment using ArgoCD](#deployment-using-argocd)
+    - [Manual deployment](#manual-deployment)
+      - [Files preparation](#files-preparation)
+      - [Deployment](#deployment-1)
+    - [Verification of deployment](#verification-of-deployment)          
   - [Additional steps](#additional-steps)
     - [Monitoring](#monitoring)
 - [Troubleshooting](#troubleshooting)
@@ -57,7 +58,11 @@ For this reason, manual onboarding activities are no longer necessary.
 | simpl-ingress | participant.be.(namespace).example.com | 
 | xfsc-advsearch-be | xfsc-advsearch-be.(namespace).example.com | 
 
-## Installation
+## Deployment
+
+The deployment is based on master helm chart which, when applied on Kubernetes cluster, should deploy the Data Provider to it using ArgoCD.
+
+### Preliminary tasks
 
 ### Vault related tasks
 
@@ -183,6 +188,8 @@ Now you can deploy the agent:
 `helm install consumer . `
 
 After starting the deployment synchronization process, the expected applications in ArgoCD will be created.
+
+### Verification of deployment
 
 Initially, the status observed e.g. in ArgoCD will indicate the creation of new pods.
 

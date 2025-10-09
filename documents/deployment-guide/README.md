@@ -91,8 +91,6 @@ You need to modify:
 
 All the other necessary secrets are now created automatically with proper data.
 
-### Deployment
-
 ### Deployment using ArgoCD
 
 You can easily deploy the agent using ArgoCD. All the values mentioned in the sections below you can input in ArgoCD deployment. The repoURL gets the package directly from code.europa.eu.

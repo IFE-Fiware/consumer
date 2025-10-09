@@ -178,7 +178,7 @@ monitoring:
   enabled: true                     # should monitoring be disabled
 ```
 
-##### Deployment
+#### Deployment
 
 After you have prepared the values file, you can start the deployment.
 Use the command prompt. Proceed to the folder where you have the Chart.yaml file and execute the following command. The dot at the end is crucial - it points to current folder to look for the chart.

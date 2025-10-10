@@ -49,3 +49,7 @@ web:
       # optional allowed origins for cross calls (separated by comma or * to allow all origins)
       # if empty no cross calls are allowed
       allowedOrigins: ""  
+
+env:
+  PUBLIC_AGENT_TYPE="consumer"
+  

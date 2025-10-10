@@ -8,9 +8,6 @@ deployment:
   urls:
     stubs: 'http://simpl-stubs:8080'
     edc: 'http://simpl-edc-service:29191/api'
-  vault:
-    hashicorp:
-      secretConfigPath: "{{ .Values.deployment.vault.hashicorp.secretEngine }}/{{ .Release.Namespace }}-contract"
 
 environment: default
 resources:
@@ -21,7 +18,3 @@ resources:
     memory: "700Mi"
     cpu: "300m"
 
-probe:
-  endpoint: "/actuator/health"
-  scheme: HTTP
-  port: 8080

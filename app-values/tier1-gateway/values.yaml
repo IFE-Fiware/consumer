@@ -2,88 +2,45 @@ profile: participant
 
 # Spring Cloud Gateway Routes Participant
 appConfig:
-  spring:
-    cloud:
-      gateway:
-        routes:
-          - id: keycloak
-            uri: ${keycloak.url}
-            predicates:
-              - Path=/auth/**
-            filters:
-              - StripPrefix=1
-          - id: users-rolesV1
-            uri: ${users-roles.url}
-            predicates:
-              - Path=/userApi/**
-            filters:
-              - StripPrefix=1
-          - id: authentication-provider-V1
-            uri: ${authentication-provider.url}
-            predicates:
-              - Path=/authApi/**
-            filters:
-              - StripPrefix=1
-          - id: contract-consumption-be
-            uri: http://contract-consumption-be:8080
-            predicates:
-              - Path=/contract-consumption/**
-            filters:
-              - StripPrefix=1
-          - id: sdtooling-wizard-be
-            uri: http://sd-creation-wizard-api:8080
-            predicates:
-              - Path=/sdtooling-api/**
-            filters:
-              - StripPrefix=1    
-          - id: xfsc-advsearch-be
-            uri: http://xfsc-advsearch-be:8080
-            predicates:
-              - Path=/xfsc-advsearch-be/**
-            filters:
-              - StripPrefix=1
-          - id: edc-connector
-            uri: http://edc-connector-adapter:8080
-            predicates:
-              - Path=/edc-connector-adapter/**
-            filters:
-              - StripPrefix=1
-          # CLI configurations
-          - id: cli-authentication-providerV1
-            uri: ${authentication-provider.url}
-            predicates:
-              - Path=
-                /cli/authApi/v1/csr/generate,
-                /cli/authApi/v1/keypairs/generate,
-                /cli/authApi/v1/keypairs,
-                /cli/authApi/v1/credentials,
-                /cli/authApi/v1/credentials/download,
-                /cli/authApi/v1/agent/ping
-            filters:
-              - StripPrefix=2
-              - name: ClientCredentialsFilter
-                args:
-                  # Here you specify the clientid and the required client role to invoke this api
-                  # in the following order: 
-                  # client-id-name: client-role-1, client-role-1
-                  # The default configuration is shown below.
-                  cli: cli-role
-          - id: cli-users-and-rolesV1
-            uri: ${users-roles.url}
-            predicates:
-              - Path=
-                /cli/userApi/v1/users/import,
-                /cli/userApi/v1/roles/import,
-                /cli/userApi/v1/roles/*/identityAttributes
-            filters:
-              - StripPrefix=2
-              - name: ClientCredentialsFilter
-                args:
-                  # Here you specify the clientid and the required client role to invoke this api
-                  # in the following order: 
-                  # client-id-name: client-role-1, client-role-1
-                  # The default configuration is shown below.
-                  cli: cli-role
+  external-routes:
+    spring-route-definitions:
+      - id: contract-consumption-be
+        uri: http://contract-consumption-be:8080
+        predicates:
+          - Path=/contract-consumption/**
+        filters:
+          - StripPrefix=1
+      - id: sdtooling-wizard-be
+        uri: http://sd-creation-wizard-api:8080
+        predicates:
+          - Path=/sdtooling-api/**
+        filters:
+          - StripPrefix=1    
+      - id: xfsc-advsearch-be
+        uri: http://xfsc-advsearch-be:8080
+        predicates:
+          - Path=/xfsc-advsearch-be/**
+        filters:
+          - StripPrefix=1
+      - id: edc-connector
+        uri: http://edc-connector-adapter:8080
+        predicates:
+          - Path=/edc-connector-adapter/**
+        filters:
+          - StripPrefix=1
+    public-urls:
+      - method: "GET"
+        path: "/actuator/health/**"
+    rbac:
+      - path: "/edc-connector-adapter/api/*/registration/register"
+        method: GET
+        roles:
+          - SD_PUBLISHER
+      - path: "/edc-connector-adapter/api/*/configuration/participant"
+        method: POST
+        roles:
+          - SD_PUBLISHER
+
   springdoc:
     swagger-ui:
       urls:
@@ -97,138 +54,3 @@ appConfig:
   keycloak:
     app:
       realm: participant
-  
-  routes:
-    public-urls:
-      - method: "GET"
-        path: "/actuator/health/**"
-      - method: "GET"
-        path: "/authApi/v1/credentials"
-      - method: "GET"
-        path: "/authApi/v1/info/version"
-      - method: "GET"
-        path: "/userApi/v1/info/version"
-  
-    denied-urls:
-      - method: "POST"
-        path: "/authApi/v1/agent/credentials/validate"
-      - method: "GET"
-        path: "/authApi/v1/agent/ephemeralProof"
-      - method: "GET"
-        path: "/authApi/v1/keypairs"
-      - method: "POST"
-        path: "/authApi/v1/mtls/ephemeralProof"
-      - method: "GET"
-        path: "/authApi/v1/mtls/ping"
-      - method: "POST"
-        path: "/authApi/v1/sessions/credentials"
-      - method: "GET"
-        path: "/authApi/v1/sessions/identityAttributes"
-  
-    rbac:
-      - method: "GET"
-        path: "/authApi/v1/agent/identityAttributes"
-        roles:
-          - "T1UAR_M"
-      - method: "GET"
-        path: "/authApi/v1/agent/identityAttributes/{credentialId}"
-        roles:
-          - "T1UAR_M"
-      - method: "DELETE"
-        path: "/authApi/v1/credentials"
-        roles:
-          - "ONBOARDER_M"
-      - method: "POST"
-        path: "/authApi/v1/credentials"
-        roles:
-          - "ONBOARDER_M"
-      - method: "POST"
-        path: "/authApi/v1/csr/generate"
-        roles:
-          - "ONBOARDER_M"
-      - method: "GET"
-        path: "/authApi/v1/identityAttributes"
-        roles:
-          - "T1UAR_M"
-          - "NOTARY"
-          - "IATTR_M"
-      - method: "HEAD"
-        path: "/authApi/v1/keypairs"
-        roles:
-          - "ONBOARDER_M"
-      - method: "POST"
-        path: "/authApi/v1/keypairs"
-        roles:
-          - "ONBOARDER_M"
-      - method: "POST"
-        path: "/authApi/v1/keypairs/generate"
-        roles:
-          - "ONBOARDER_M"
-      - method: "GET"
-        path: "/userApi/v1/roles"
-        roles:
-          - "T1UAR_M"
-      - method: "POST"
-        path: "/userApi/v1/roles"
-        roles:
-          - "T1UAR_M"
-      - method: "DELETE"
-        path: "/userApi/v1/roles/{roleId}"
-        roles:
-          - "T1UAR_M"
-      - method: "GET"
-        path: "/userApi/v1/roles/{roleId}"
-        roles:
-          - "T1UAR_M"
-      - method: "PUT"
-        path: "/userApi/v1/roles/{roleId}"
-        roles:
-          - "T1UAR_M"
-      - method: "DELETE"
-        path: "/userApi/v1/roles/{roleId}/identityAttributes"
-        roles:
-          - "T1UAR_M"
-      - method: "PUT"
-        path: "/userApi/v1/roles/{roleId}/identityAttributes"
-        roles:
-          - "T1UAR_M"
-      - method: "POST"
-        path: "/userApi/v1/roles/{roleId}/identityAttributes/duplicate"
-        roles:
-          - "T1UAR_M"
-      - method: "GET"
-        path: "/userApi/v1/users"
-        roles:
-          - "T1UAR_M"
-      - method: "POST"
-        path: "/userApi/v1/users/import"
-        roles:
-          - "T1UAR_M"
-      - method: "DELETE"
-        path: "/userApi/v1/users/{userId}"
-        roles:
-          - "T1UAR_M"
-      - method: "GET"
-        path: "/userApi/v1/users/{userId}"
-        roles:
-          - "T1UAR_M"
-      - method: "PUT"
-        path: "/userApi/v1/users/{userId}"
-        roles:
-          - "T1UAR_M"
-      - method: "GET"
-        path: "/userApi/v1/users/{userId}/roles"
-        roles:
-          - "T1UAR_M"
-      - method: "PUT"
-        path: "/userApi/v1/users/{userId}/roles"
-        roles:
-          - "T1UAR_M"
-      - path: "/edc-connector-adapter/api/*/registration/register"
-        method: GET
-        roles:
-          - SD_PUBLISHER
-      - path: "/edc-connector-adapter/api/*/configuration/participant"
-        method: POST
-        roles:
-          - SD_PUBLISHER

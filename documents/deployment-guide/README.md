@@ -199,7 +199,7 @@ At the end, all pods should be created correctly:
 
 ### Onboarding
 
-In the current version, after the deployment process is complete, a manual onboarding process of the participant is required. 
+After the deployment process is complete, a manual onboarding process of the participant is required. 
 
 The steps are described in the document:
 https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.4.x/user-manual/ONBOARD.md

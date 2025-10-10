@@ -19,7 +19,7 @@
     - [Onboarding](#onboarding)
     - [Tier2-proxy status](#tier2-proxy-status)
     - [Monitoring](#monitoring)
-- [Troubleshooting](#troubleshooting)
+  - [Troubleshooting](#troubleshooting)
 
 <!-- TOC -->
 

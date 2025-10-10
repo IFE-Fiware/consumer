@@ -3,8 +3,7 @@
 <!-- TOC -->
 - [Consumer Agent](#consumer-agent)
   - [Description](#description)
-  - [Pre-Requisites](#pre-requisites)
-    - [Onboarding](#onboarding)
+  - [Prerequisites](#prerequisites)
     - [Tools](#tools)
     - [DNS entries](#dns-entries)
   - [Deployment](#deployment)
@@ -16,7 +15,9 @@
       - [Files preparation](#files-preparation)
       - [Deployment](#deployment-1)
     - [Verification of deployment](#verification-of-deployment)          
-  - [Additional steps](#additional-steps)
+  - [Additional steps and remarks](#additional-steps-and-remarks)
+    - [Onboarding](#onboarding)
+    - [Tier2-proxy status](#tier2-proxy-status)
     - [Monitoring](#monitoring)
 - [Troubleshooting](#troubleshooting)
 
@@ -29,14 +30,10 @@ This repo contains:
 - a master helm chart allowing to deploy a **Consumer** agent using a single command.
 - templates of values.yaml files used inside *Integration* environment under `app-values` folder
 
-## Pre-Requisites
-
-### Onboarding
-
-In the current version, the automatic onboarding process has already been implemented using: init-participant-job.
-For this reason, manual onboarding activities are no longer necessary.
+## Prerequisites
 
 ### Tools
+
 | Pre-Requisites      |     Version     | Description                                                                                                                                                                               |
 |---------------------|:---------------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | DNS sub-domain name |       N/A       | This domain will be used to address all services of the agent. <br/> example: `*.consumer01.example.com` | 
@@ -50,13 +47,13 @@ For this reason, manual onboarding activities are no longer necessary.
 
 | Entry Name | Entries |
 | :-----------: | :-------------------------------------------------------------------------------------------------: |
-| catalogue-ui | catalogue-ui.(namespace).example.com |
-| contract-consumption-be| contract-consumption-be.(namespace).example.com |
-| edc-connector-adapter | edc-connector-adapter.(namespace).example.com |
-| simpl-edc-ingress | edc.(namespace).example.com/management<br>edc.(namespace).example.com/api<br>edc.(namespace).example.com/protocol<br>edc.(namespace).example.com/public<br>  edc.(namespace).example.com/control |
-| simpl-fe-ingress | participant.fe.(namespace).example.com/users-roles <br>participant.fe.(namespace).example.com/participant-utility |
-| simpl-ingress | participant.be.(namespace).example.com | 
-| xfsc-advsearch-be | xfsc-advsearch-be.(namespace).example.com | 
+| catalogue-ui | catalogue-ui.(namespace).(domainSuffix) |
+| contract-consumption-be| contract-consumption-be.(namespace).(domainSuffix) |
+| edc-connector-adapter | edc-connector-adapter.(namespace).(domainSuffix) |
+| simpl-edc-ingress | edc.(namespace).(domainSuffix)/management<br>edc.(namespace).(domainSuffix)/api<br>edc.(namespace).(domainSuffix)/protocol<br>edc.(namespace).(domainSuffix)/public<br>  edc.(namespace).(domainSuffix)/control |
+| simpl-fe-ingress | participant.fe.(namespace).(domainSuffix)/users-roles <br>participant.fe.(namespace).(domainSuffix)/participant-utility |
+| simpl-ingress | participant.be.(namespace).(domainSuffix) | 
+| xfsc-advsearch-be | xfsc-advsearch-be.(namespace).(domainSuffix) | 
 
 ## Deployment
 
@@ -64,7 +61,7 @@ The deployment is based on master helm chart which, when applied on Kubernetes c
 
 ### Preliminary tasks
 
-### Vault related tasks
+#### Vault related tasks
 
 You can access vault on <https://secrets.**commonnamespacetag**.**domainSuffix**>
 Root token can be found in common namespace, secret secrets-root-token, in key token. 
@@ -75,19 +72,19 @@ The description of using vault is in a separate document:
 
 Before you proceed with the next steps related to accessing your Vault and changing its contents, please read the document above.<BR>
 
-#### Secret for EDC
+##### Secret for EDC
 
-Edit the key for Infrastructure-be named "*consumer01*-simpl-edc" replacing "01" in "consumer01" with the appropriate entry and the data mentioned in the table with proper values.
+Edit the key for Infrastructure-be named "*dataprovider01*-simpl-edc" where the first part reflects the namespace of your dataprovider. Please contact IONOS to get the correct values. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com
 
 You need to modify:
 
 | Variable name                    |     Example         | Description              |
 | ----------------------           |     :-----:         | ---------------          |
-| edc_ionos_access_key             | accesskeystring     | Access key for S3 - please contact IONOS to get the correct value. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com |
+| edc_ionos_access_key             | accesskeystring     | Access key for S3        |
 | edc_ionos_endpoint               | s3-eu-central-1.ionoscloud.com | S3 server url |
 | edc_ionos_endpoint_region        | de                  | Two letter country code  |
-| edc_ionos_secret_key             | secretkeystring     | Secret key for S3 - please contact IONOS to get the correct value. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com |
-| edc_ionos_token                  | tokenstring         | Token for S3 access - please contact IONOS to get the correct value. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com |
+| edc_ionos_secret_key             | secretkeystring     | Secret key for S3        |
+| edc_ionos_token                  | tokenstring         | Token for S3 access      |
 
 All the other necessary secrets are now created automatically with proper data.
 
@@ -142,9 +139,9 @@ spec:
 
 ```
 
-#### Manual deployment
+### Manual deployment
 
-##### Files preparation
+#### Files preparation
 
 Another way for deployment, is to unpack the released package to a folder on a host where you have kubectl and helm available and configured.
 
@@ -198,12 +195,18 @@ At the end, all pods should be created correctly:
 <img src="images/consumer_ArgoCD01.png" alt="ArgoCD01" width="600"><BR>
 
 
-## Additional steps
+## Additional steps and remarks
 
-In the current version, after the deployment process is complete, a manual onboarding deployment process is required. 
+### Onboarding
+
+In the current version, after the deployment process is complete, a manual onboarding process of the participant is required. 
 
 The steps are described in the document:
-https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.2.x/ONBOARD.md
+https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.4.x/user-manual/ONBOARD.md
+
+### Tier2-proxy status
+
+Please keep in mind that until the agent is properly initialized, the tier2-proxy component will not work properly.
 
 ### Monitoring
 

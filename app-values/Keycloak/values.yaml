@@ -28,3 +28,8 @@ extraVolumeMounts:
     mountPath: /opt/bitnami/keycloak/data/import/realm.json
     subPath: realm.json
 
+image:
+  repository: bitnamilegacy/keycloak
+security:
+  allowInsecureImages: true
+  

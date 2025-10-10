@@ -1,6 +1,6 @@
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
-  branch: v2.1.2
+  branch: v2.3.0
 
 project: ${PROJECT}
 domainSuffix: ${DOMAINSUFFIX}
@@ -22,9 +22,38 @@ cluster:
   commonToolsNamespace: ${COMMONNAMESPACE}
   issuer: ${CLUSTERISSUER}
 
-hashicorp:
+secrets:
   secretEngine: ${SECRETENGINE}
   role: ${SECRETROLE}
+
+redis:
+  repo_URL: 'https://charts.bitnami.com/bitnami'
+  targetRevision: 19.6.0
+  chart_name: redis
+  nameOverride: redis
+  resourcesPreset: "none"
+  resources:
+    requests:
+      cpu: "0"
+      memory: "0"
+  valueFiles:
+    - values.yaml
+
+redis_commander:
+  enabled: true
+  repo_URL: 'https://github.com/joeferner/redis-commander.git'
+  targetRevision: master
+  nameOverride: redis-commander
+  path: 'k8s/helm-chart/redis-commander'
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  valueFiles:
+    - values.yaml
 
 keycloak:
   repo_URL: https://charts.bitnami.com/bitnami
@@ -44,7 +73,7 @@ keycloak:
 
 tier1_gateway:
   projectID: "772"
-  targetRevision: 2.0.0
+  targetRevision: 2.4.0
   chart_name: tier1-gateway
   resources:
     requests:
@@ -59,7 +88,7 @@ tier1_gateway:
 xfsc_advsearch_be:
   enabled: true
   projectID: "891"
-  targetRevision: 1.11.1
+  targetRevision: 1.14.1
   chart_name: xfsc-advsearch
   resources:
     requests:
@@ -74,7 +103,7 @@ xfsc_advsearch_be:
 
 users_roles:
   projectID: "771"
-  targetRevision: 2.0.0
+  targetRevision: 2.4.0
   chart_name: users-roles
   resources:
     requests:
@@ -88,7 +117,7 @@ users_roles:
 
 simpl_fe:
   projectID: "769"
-  targetRevision: 2.0.1
+  targetRevision: 2.4.0
   chart_name: simpl-fe
   resources:
     requests:
@@ -103,7 +132,7 @@ simpl_fe:
 
 tier2_gateway:
   projectID: "860"
-  targetRevision: 2.0.0
+  targetRevision: 2.4.0
   chart_name: tier2-gateway
   resources:
     requests:
@@ -116,10 +145,24 @@ tier2_gateway:
     - values.yaml
     - values-routes.yaml
 
+tier2_proxy:
+  projectID: "1112"
+  targetRevision: 1.0.1
+  chart_name: tier2-proxy
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "500Mi"
+    limits:
+      cpu: "500m"
+      memory: "500Mi"
+
+
+
 simpl_edc:
   enabled: true
   projectID: "920"
-  targetRevision: 1.0.10
+  targetRevision: 1.0.11
   chart_name: edc
   nameOverride: simpl-edc
   resources:
@@ -136,7 +179,7 @@ simpl_edc:
 edc_connector_adapter:
   enabled:  true
   projectID: "1091"
-  targetRevision: 1.3.0
+  targetRevision: 1.6.0
   chart_name: edc-connector-adapter
   nameOverride: edc-connector-adapter
   valueFiles:
@@ -145,7 +188,7 @@ edc_connector_adapter:
 simpl_catalogue_client:
   enabled: true
   projectID: "937"
-  targetRevision: 1.2.1
+  targetRevision: 1.2.6
   chart_name: catalogue-ui
   resources:
     requests:
@@ -159,7 +202,7 @@ simpl_catalogue_client:
 
 auth_provider:
   projectID: "939"
-  targetRevision: 2.0.0
+  targetRevision: 2.4.2
   chart_name: authentication-provider
   resources:
     requests:
@@ -167,14 +210,14 @@ auth_provider:
       memory: "500Mi"
     limits:
       cpu: "500m"
-      memory: "500Mi" 
+      memory: "1Gi" 
   valueFiles:
     - values.yaml
 
 monitoring:
   enabled: true
   projectID: "828"
-  targetRevision: 0.1.15
+  targetRevision: 0.1.18
   chart_name: eck-monitoring
   fullnameOverride: elastic
   resources:
@@ -187,7 +230,7 @@ monitoring:
 
 contract:
   projectID: "872"
-  targetRevision: 2.0.0
+  targetRevision: 2.0.9
   chart_name: simpl-contract
   resources:
     requests:
@@ -202,7 +245,7 @@ contract:
 
 stubs:
   projectID: "930"
-  targetRevision: 1.0.3
+  targetRevision: 2.0.2
   chart_name: simpl-stubs
   valueFiles:
     - values.yaml  
@@ -210,7 +253,7 @@ stubs:
 contract_consumption_be:
   enabled: true
   projectID: "968"
-  targetRevision: 1.8.0
+  targetRevision: 1.11.0
   chart_name: contract-consumption-be
   nameOverride: contract-consumption-be
   valueFiles:

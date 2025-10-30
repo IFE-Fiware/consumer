@@ -1,6 +1,6 @@
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
-  branch: v2.3.1
+  branch: v2.3.2
 
 project: ${PROJECT}
 domainSuffix: ${DOMAINSUFFIX}
@@ -217,7 +217,7 @@ auth_provider:
 monitoring:
   enabled: true
   projectID: "828"
-  targetRevision: 0.1.18
+  targetRevision: 0.1.20
   chart_name: eck-monitoring
   fullnameOverride: elastic
   resources:

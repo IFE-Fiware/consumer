@@ -8,20 +8,19 @@
     - [DNS entries](#dns-entries)
   - [Deployment](#deployment)
     - [Preliminary tasks](#preliminary-tasks)
-      - [Vault related tasks](#vault-related-tasks)
+      - [OpenBao related tasks](#openbao-related-tasks)
         - [Secret for EDC](#secret-for-edc)
     - [Deployment using ArgoCD](#deployment-using-argocd)
     - [Manual deployment](#manual-deployment)
       - [Files preparation](#files-preparation)
-      - [Deployment](#deployment-1)
-    - [Verification of deployment](#verification-of-deployment)          
+      - [Deployment Command to execute](#deployment-command-to-execute)
+    - [Verification of deployment](#verification-of-deployment)
   - [Additional steps and remarks](#additional-steps-and-remarks)
     - [Onboarding](#onboarding)
     - [Tier2-proxy status](#tier2-proxy-status)
     - [Monitoring](#monitoring)
   - [Troubleshooting](#troubleshooting)
-
-<!-- TOC -->
+<!-- /TOC -->
 
 ## Description
 
@@ -61,20 +60,20 @@ The deployment is based on master helm chart which, when applied on Kubernetes c
 
 ### Preliminary tasks
 
-#### Vault related tasks
+#### OpenBao related tasks
 
-You can access vault on <https://secrets.**commonnamespacetag**.**domainSuffix**>
+You can access OpenBao on <https://secrets.**commonnamespacetag**.**domainSuffix**>
 Root token can be found in common namespace, secret secrets-root-token, in key token. 
 
-The description of using vault is in a separate document:
+The description of using OpenBao is in a separate document:
 
-<https://code.europa.eu/simpl/simpl-open/development/agents/common_components/-/blob/main/documents/user-manual/Using_Vault.md>
+<https://code.europa.eu/simpl/simpl-open/development/agents/common_components/-/blob/main/documents/user-manual/OpenBao.md>
 
-Before you proceed with the next steps related to accessing your Vault and changing its contents, please read the document above.<BR>
+Before you proceed with the next steps related to accessing your OpenBao and changing its contents, please read the document above.<BR>
 
 ##### Secret for EDC
 
-Edit the key for Infrastructure-be named "*dataprovider01*-simpl-edc" where the first part reflects the namespace of your dataprovider. Please contact IONOS to get the correct values. Currently the best way is to send an email requesting this data to Paulo Cabrita: paulo.cabrita@ionos.com
+Edit the key for Infrastructure-be named "*<namespace>*-simpl-edc" where the first part reflects the namespace of your dataprovider. Please contact IONOS to get the correct values. Currently the best way is to send an email requesting this data to Paulo Cabrita: <paulo.cabrita@ionos.com>
 
 You need to modify:
 
@@ -128,8 +127,8 @@ spec:
           commonToolsNamespace: common01    # namespace where main monitoring stack is deployed
           issuer: dev-prod                  # certificate issuer
         secrets:
-          secretEngine: example             # secret engine name created in vault
-          role: example-role                # role created in vault for access
+          secretEngine: example             # secret engine name created in OpenBao
+          role: example-role                # role created in OpenBao for access
         monitoring:
           enabled: true                     # should monitoring be disabled
     chart: consumer
@@ -167,20 +166,20 @@ cluster:
   commonToolsNamespace: common01    # namespace where main monitoring stack is deployed
   issuer: dev-prod                  # certificate issuer
 secrets:
-  secretEngine: example             # secret engine name created in vault
-  role: example-role                # role created in vault for access
+  secretEngine: example             # secret engine name created in OpenBao
+  role: example-role                # role created in OpenBao for access
 monitoring:
   enabled: true                     # should monitoring be disabled
 ```
 
-#### Deployment
+#### Deployment Command to execute
 
 After you have prepared the values file, you can start the deployment.
 Use the command prompt. Proceed to the folder where you have the Chart.yaml file and execute the following command. The dot at the end is crucial - it points to current folder to look for the chart.
 
 Now you can deploy the agent:
 
-`helm install consumer . `
+`helm install consumer .`
 
 After starting the deployment synchronization process, the expected applications in ArgoCD will be created.
 
@@ -194,15 +193,15 @@ At the end, all pods should be created correctly:
 
 <img src="images/consumer_ArgoCD01.png" alt="ArgoCD01" width="600"><BR>
 
-
 ## Additional steps and remarks
 
 ### Onboarding
 
-After the deployment process is complete, a manual onboarding process of the participant is required. 
+After the deployment process is complete, a manual onboarding process of the participant is required.
 
 The steps are described in the document:
-https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.4.x/user-manual/ONBOARD.md
+
+<https://code.europa.eu/simpl/simpl-open/development/iaa/documentation/-/blob/main/versioned_docs/2.4.x/user-manual/ONBOARD.md>
 
 ### Tier2-proxy status
 

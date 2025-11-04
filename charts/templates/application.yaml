@@ -178,7 +178,7 @@ spec:
         {{- end }}
       values: |
         ingress:
-          enabled: false
+          clusterIssuer: {{ .Values.cluster.issuer }}
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         catalogueAdapter:
           tier2Gateway:
@@ -549,7 +549,7 @@ spec:
         {{- end }}
       values: |
         ingress:
-          enabled: false
+          clusterIssuer: {{ .Values.cluster.issuer }}
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         openapiConfig:
           servers: https://edc-connector-adapter.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
@@ -681,7 +681,7 @@ spec:
         {{- end }}
       values: |
         ingress:
-          enabled: false
+          clusterIssuer: {{ .Values.cluster.issuer }}
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         connectorAdapter:
           tier1Gateway:

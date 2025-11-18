@@ -88,10 +88,6 @@ spec:
         - $values/app-values/Keycloak/{{ . }}
         {{- end }}
       values: |
-        image:
-          repository: bitnamilegacy/keycloak
-        security:
-          allowInsecureImages: true
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
         apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
         podAnnotations:
@@ -128,7 +124,7 @@ spec:
             - name: ARTIFACT
               value: keycloak-authenticator
             - name: URL
-              value: https://code.europa.eu/api/v4/projects/915/packages/maven/com/aruba/simpl/keycloak-authenticator/2.1.0/keycloak-authenticator-2.1.0.jar
+              value: https://code.europa.eu/api/v4/projects/915/packages/maven/com/aruba/simpl/keycloak-authenticator/2.2.0/keycloak-authenticator-2.2.0.jar
           args:
             - |
               curl -o /custom-spi/${ARTIFACT}.jar ${URL};
@@ -177,8 +173,6 @@ spec:
         - $values/app-values/xfsc-advsearch-be/{{ . }}
         {{- end }}
       values: |
-        ingress:
-          clusterIssuer: {{ .Values.cluster.issuer }}
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         catalogueAdapter:
           tier2Gateway:
@@ -409,7 +403,8 @@ spec:
         resources:
           requests:
             cpu: "0"
-            memory: "0"                
+            memory: "0"
+        {{- else }}                            
           {{- if .Values.tier2_gateway.resources }}
         resources: {{- toYaml .Values.tier2_gateway.resources | nindent 10 }}
           {{- end }}
@@ -510,10 +505,6 @@ spec:
         - $values/app-values/simpl-edc/{{ . }}
         {{- end }}
       values: |
-        ingress:
-          host: edc.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
-          clusterIssuer: {{ .Values.cluster.issuer }}
-          enabled: true
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
           callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"
@@ -526,7 +517,7 @@ spec:
           role: {{ .Values.secrets.role }}
           service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
         secretEngine: {{ .Values.secrets.secretEngine }}
-                {{- if eq .Values.resourcePreset "low" }}
+        {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:
             cpu: "0"
@@ -680,8 +671,6 @@ spec:
         - $values/app-values/contract-consumption-be/{{ . }}
         {{- end }}
       values: |
-        ingress:
-          clusterIssuer: {{ .Values.cluster.issuer }}
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         connectorAdapter:
           tier1Gateway:

@@ -1,6 +1,6 @@
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
-  branch: v2.3.4
+  branch: v2.4.0
 
 project: ${PROJECT}
 domainSuffix: ${DOMAINSUFFIX}
@@ -40,7 +40,7 @@ redis:
     - values.yaml
 
 redis_commander:
-  enabled: true
+  enabled: false
   repo_URL: 'https://github.com/joeferner/redis-commander.git'
   targetRevision: master
   nameOverride: redis-commander
@@ -73,7 +73,7 @@ keycloak:
 
 tier1_gateway:
   projectID: "772"
-  targetRevision: 2.4.0
+  targetRevision: 2.5.0
   chart_name: tier1-gateway
   resources:
     requests:
@@ -88,7 +88,7 @@ tier1_gateway:
 xfsc_advsearch_be:
   enabled: true
   projectID: "891"
-  targetRevision: 1.14.2
+  targetRevision: 1.15.0
   chart_name: xfsc-advsearch
   resources:
     requests:
@@ -103,7 +103,7 @@ xfsc_advsearch_be:
 
 users_roles:
   projectID: "771"
-  targetRevision: 2.4.0
+  targetRevision: 2.5.1
   chart_name: users-roles
   resources:
     requests:
@@ -117,7 +117,7 @@ users_roles:
 
 simpl_fe:
   projectID: "769"
-  targetRevision: 2.4.0
+  targetRevision: 2.5.0
   chart_name: simpl-fe
   resources:
     requests:
@@ -132,7 +132,7 @@ simpl_fe:
 
 tier2_gateway:
   projectID: "860"
-  targetRevision: 2.4.0
+  targetRevision: 2.5.0
   chart_name: tier2-gateway
   resources:
     requests:
@@ -157,8 +157,6 @@ tier2_proxy:
       cpu: "500m"
       memory: "500Mi"
 
-
-
 simpl_edc:
   enabled: true
   projectID: "920"
@@ -179,7 +177,7 @@ simpl_edc:
 edc_connector_adapter:
   enabled:  true
   projectID: "1091"
-  targetRevision: 1.6.0
+  targetRevision: 1.7.0
   chart_name: edc-connector-adapter
   nameOverride: edc-connector-adapter
   valueFiles:
@@ -188,7 +186,7 @@ edc_connector_adapter:
 simpl_catalogue_client:
   enabled: true
   projectID: "937"
-  targetRevision: 1.2.7
+  targetRevision: 2.0.0
   chart_name: catalogue-ui
   resources:
     requests:
@@ -202,7 +200,7 @@ simpl_catalogue_client:
 
 auth_provider:
   projectID: "939"
-  targetRevision: 2.4.2
+  targetRevision: 2.5.2
   chart_name: authentication-provider
   resources:
     requests:
@@ -217,7 +215,7 @@ auth_provider:
 monitoring:
   enabled: true
   projectID: "828"
-  targetRevision: 0.1.20
+  targetRevision: 0.2.0
   chart_name: eck-monitoring
   fullnameOverride: elastic
   resources:
@@ -253,7 +251,7 @@ stubs:
 contract_consumption_be:
   enabled: true
   projectID: "968"
-  targetRevision: 1.11.0
+  targetRevision: 1.12.0
   chart_name: contract-consumption-be
   nameOverride: contract-consumption-be
   valueFiles:

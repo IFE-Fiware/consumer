@@ -28,6 +28,12 @@ appConfig:
           - Path=/edc-connector-adapter/**
         filters:
           - StripPrefix=1
+      - id: edc-management
+        uri: http://simpl-edc-service:29193
+        predicates:
+          - Path=/edc/**
+        filters:
+          - StripPrefix=1
     public-urls:
       - method: "GET"
         path: "/actuator/health/**"

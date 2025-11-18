@@ -13,3 +13,6 @@ javadebug:
 
 serviceAccount:
   name: simpl-edc-service-account
+
+ingress:
+  enabled: false

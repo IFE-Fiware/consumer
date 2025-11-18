@@ -41,3 +41,7 @@ kafka:
   fatalIfBrokerNotAvailable: false
 
 appJarPath: "/home/simpluser/app.jar"
+
+ingress:
+  enabled: false
+

@@ -37,3 +37,7 @@ validation:
   config:
     enabled: false
     domain: "http://sd-validation:8080"
+
+ingress:
+  enabled: false
+      

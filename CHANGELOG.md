@@ -5,82 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.3.4] - 2025-11-04
-
-- Fixed ClusterIssuer for Contract-Consumption-BE, EDC-Connector-Adapter and XFSC-AdvSearch-BE ingresses (SIMPL-19845)
-
-## [2.3.3] - 2025-10-31
-
-- Replaced HashiCorp Vault by OpenBao
-
-## [2.3.2] - 2025-10-30
-
-- Update monitoring stack to version 0.1.20.
-
-## [2.3.1] - 2025-10-14
-
-- Updated simpl_catalogue_client: 1.2.7, xfsc_advsearch_be: 1.14.2
-
-## [2.3.0] - 2025-10-10
-
-- Updated many components to implement Consumer version 2.3.0.
-- Add component Redis.
-- Add component Tier2-Proxy.
+## [2.4.0] - 2025-11-15
+- Updated many components to implement Consumer version 2.4.0.
 
 ### Simpl Cloud gateway (Tier 1)
 
-#### 2.4.0 (2025-09-08)
+#### 2.5.0 (2025-09-29)
 
 #### Added
+- Added new routes for Security Attributes Provider
 
-- SIMPL-14971
+#### Fixed
+- Https constraints applied in Content Security Policy only when https origins are present
 
-#### Changed
-
-- SIMPL-15701
 
 ### Users Roles
 
-#### 2.4.0 (2025-09-08)
-
-#### Added
-
-- SIMPL-14971
+#### 2.5.1 (2025-10-16)
 
 #### Fixed
+- Identity Attributes validation now handles correctly identity attributes not assigned to participant, not assignable to roles and disabled.
 
-- SIMPL-16771
+#### 2.5.0 (2025-09-29)
+
+#### Fixed
+- SIMPL-12860
+- SIMPL-16081
+
 
 ### SIMPL FE
 
-#### 2.4.0 (2025-09-08)
+#### 2.5.0 (2025-09-29)
 
 #### Added
-
-- SIMPL-15662
-- SIMPL-15665
-- SIMPL-12865
-- SIMPL-15656
-- SIMPL-15655
+- SIMPL-14573
+- SIMPL-16741
+- SIMPL-16738
+- SIMPL-16739
+- SIMPL-16740
 
 #### Fixed
-
-- SIMPL-15726
-- SIMPL-16121
-- SIMPL-15909
-- SIMPL-15909
+- SIMPL-16738
 
 ### TLS Gateway (Tier 2)
 
-#### 2.4.0 (2025-09-08)
+#### 2.5.0 (2025-09-29)
 
 #### Added
-
-- SIMPL-14971
+- Added new routes for Security Attributes Provider
 
 #### Fixed
+- SIMPL-14604
 
-- SIMPL-10191
 
 ### Tier 2 Proxy
 
@@ -90,62 +66,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed base docker image
 
+
 ### Authentication Provider
 
-#### 2.4.2 (2025-09-26)
+#### 2.5.2 (2025-10-17)
 
 #### Fixed
+- Removed bitnami legacy image from helm chart
 
-- Identity Attributes of local copy get creationTimestamp and updateTimestamp from authority synchronization flow
-- SIMPL-13018
+#### 2.5.1 (2025-10-07)
 
-#### 2.4.1 (2025-09-18)
+#### Fixed
+- Attempt identity attributes update after storing the ephemeral proof
+- Avoid storing already expired ephemeral proofs
 
-No changes.
-
-#### 2.4.0 (2025-09-08)
+#### 2.5.0 (2025-09-29)
 
 #### Added
+- SIMPL-17522
+- SIMPL-17529
+- SIMPL-17530
+- SIMPL-17492
+- SIMPL-17517
+- SIMPL-17516
 
-- Added unique constraint on private_key.keypair_id column
-- SIMPL-14971
-- SIMPL-12990
+#### Fixed
+- SIMPL-16621
 
 ### xsfc-advsearch-be
 
-#### 1.14.1 (2025-09-04)
-
-No changes.
-
-#### 1.14.0 (2025-09-20)
+#### 1.15.0 (2025-09-26)
 
 #### Added
-
-- SIMPL-17313
+- SIMPL-14978
 
 #### Fixed
+- fixed request logging issue
 
-- SIMPL-17434
+#### Changed
+- simpl-data1-common updated to 1.5.0
+- SIMPL-17497
+
 
 ### edc connector adapter
 
-#### 1.6.0 (2025-09-04)
+#### 1.7.0 (2025-09-26)
+No changes.
 
-#### Added
-
-- SIMPL-17313
-
-#### Fixed
-
-- SIMPL-8258
 
 ### contract-consumption-be
 
-#### 1.11.0 (2025-09-04)
+#### 1.12.0 (2025-09-26)
 
-#### Added
+#### Fixed
+- SIMPL-13435
 
-- SIMPL-17313
 
 ### simpl-edc
 
@@ -155,31 +130,23 @@ No changes.
 
 - SIMPL-14812 fix sonar issues
 
+
 ### simpl-catalogue-client
 
-#### 1.2.6 (2025-09-30)
-
+#### 2.0.0 (2025-09-29)
 No changes.
 
-#### 1.2.5 (2025-08-04)
-
-#### Added
-
-- SIMPL-14811
-
-#### Changed
-
-- SIMPL-14790
-
-#### Fixed
-
-- SIMPL-10725
 
 ### Filebeat
 
-#### 0.1.18 (2025-09-04)
+#### 0.1.19 (2025-09-26)
 
-No changes.
+#### Fixed
+- SIMPL-18667 Fix cluster health alert
+
+#### Changed
+- SIMPL-18665 Create ILM policy for filebeat
+
 
 ### Contract Manager
 
@@ -187,8 +154,8 @@ No changes.
 
 No changes.
 
-#### 2.0.6 (2025-09-03)
 
-#### Changed
+### Signer (Stubs)
 
-- SIMPL-15093
+#### 2.0.2 (2025-07-23)
+No changes.

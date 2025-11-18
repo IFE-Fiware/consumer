@@ -19,6 +19,9 @@ schemaVolumeClaim: nfs-storage-pvc-sd
 #Mount path used for schema storage
 schemaPvcMountPath: /data
 
+ingress:
+  enabled: false
+
 # authentication provider
 authenticationProvider:
   service: 

@@ -9,7 +9,8 @@ service:
   publicPort: 29291
 
 ingress:
-  tlsSecretName: consumer-simpl-backend-tls
+  enabled: false
+  # tlsSecretName: consumer-simpl-backend-tls
 
 # it would be better to move those to vault in the future or use sops encryption
 env:

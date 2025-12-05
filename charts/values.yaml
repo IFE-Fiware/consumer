@@ -1,6 +1,6 @@
 values:
   repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
-  branch: v2.4.0
+  branch: v2.4.1
 
 project: ${PROJECT}
 domainSuffix: ${DOMAINSUFFIX}
@@ -14,7 +14,7 @@ resourcePreset: default
 
 argocd:
   appname: ${NAMESPACE}
-  namespace: argocd
+  namespace: ${ARGOCDNAMESPACE}
 
 cluster:
   address: https://kubernetes.default.svc

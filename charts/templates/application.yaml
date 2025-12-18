@@ -163,10 +163,10 @@ spec:
           {{- end }}
         {{- end }}  
   {{- if .Values.xfsc_advsearch_be.enabled }}      
-  - repoURL: "https://code.europa.eu/api/v4/projects/{{ .Values.xfsc_advsearch_be.projectID }}/packages/helm/stable"
-    path: ''
+  - repoURL: "https://github.com/IFE-Fiware/xfsc_advsearch_be"
+    path: 'charts'
     targetRevision: {{ .Values.xfsc_advsearch_be.targetRevision }}
-    chart: {{ .Values.xfsc_advsearch_be.chart_name }}
+#    chart: {{ .Values.xfsc_advsearch_be.chart_name }}
     helm:
       valueFiles:
         {{- range .Values.xfsc_advsearch_be.valueFiles }}
@@ -176,10 +176,10 @@ spec:
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         catalogueAdapter:
           tier2Gateway:
-            url: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
+            url: "https://tls-authority-{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         federatedCatalogue:
           tier2Gateway:
-            url: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
+            url: "https://tls-authority-{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
 
         {{- if eq .Values.resourcePreset "low" }}
         resources:
@@ -191,6 +191,10 @@ spec:
         resources: {{- toYaml .Values.xfsc_advsearch_be.resources | nindent 10 }}
           {{- end }}
         {{- end }}
+        image:
+          repository: code.europa.eu:4567/simpl/simpl-open/development/data1/xfsc-advsearch-be
+          tag: {{ .Values.xfsc_advsearch_be.targetRevOrig }}
+        schemaPvcClass: {{ .Values.xfsc_advsearch_be.schemaPvcClass }}
       releaseName: {{ .Values.xfsc_advsearch_be.nameOverride }}
 
   {{- end }}
@@ -207,7 +211,7 @@ spec:
       values: |
         env:
           PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
-          PUBLIC_FC_DATA_URL: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}/fc"
+          PUBLIC_FC_DATA_URL: "https://tls-authority-{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}/fc"
           PUBLIC_SEARCH_API_URL: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/xfsc-advsearch-be"
           PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/contract-consumption"
         ingress:
@@ -382,7 +386,7 @@ spec:
           bootstrap-servers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
         redis:
           host: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
-        hostT2: "tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
+        hostT2: "tls-participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
         authorityUrlT1: "https://authority.be.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         kafkaConfig:
           spring:
@@ -442,7 +446,7 @@ spec:
         podAnnotations:
           vault.security.banzaicloud.io/vault-addr: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
-        urlAuthorityT2: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
+        urlAuthorityT2: "https://tls-authority-{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         db:
           url: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_authenticationprovider"
           username: {{ .Values.namespaceTag.consumer }}_authenticationprovider
@@ -459,7 +463,7 @@ spec:
           identityProviderUrl: http://identity-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         simpl:
           certificate:
-            san: "tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
+            san: "tls-participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
         redis:
           host: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
         kafkaConfig:
@@ -481,7 +485,7 @@ spec:
           management:
             otlp:
               tracing:
-                endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}                
+                endpoint: http://collector-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}                
         {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:
@@ -507,7 +511,7 @@ spec:
       values: |
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
-          callbackAddress: "https://tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/edc"
+          callbackAddress: "https://tls-participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/edc"
         env:
           datasourceurl: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_edc"
           edcParticipantId: {{ .Values.cluster.namespace }}
@@ -546,9 +550,9 @@ spec:
           servers: https://edc-connector-adapter-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
         openTelemetry:
           otlpExporter:
-            endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
+            endpoint: http://collector-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}
         edcConnector:
-          tier2BaseUrl: https://tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/edc
+          tier2BaseUrl: https://tls-participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/edc
         kafka:
           bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092 
           topics:
@@ -623,7 +627,7 @@ spec:
               statusUpdate: status-update-{{ .Values.cluster.namespace }}
               statusUpdateDLT: status-update-dlt-{{ .Values.cluster.namespace }}
           otel:
-            endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
+            endpoint: http://collector-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}
           vault:
             hashicorp:
               service: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
@@ -690,7 +694,7 @@ spec:
           servers: https://creation-wizard-api-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
         openTelemetry:
           otlpExporter:
-            endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
+            endpoint: http://collector-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}
         vault:
           secretEngine: "{{ .Values.secrets.secretEngine }}"
           secretPath: "{{ .Values.secrets.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"

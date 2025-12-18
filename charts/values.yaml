@@ -1,6 +1,7 @@
 values:
-  repo_URL: https://code.europa.eu/simpl/simpl-open/development/agents/consumer.git
-  branch: v2.4.1
+  repo_URL: https://github.com/IFE-Fiware/consumer.git
+  branch: dev-ife
+#  branch: v2.4.1
 
 project: ${PROJECT}
 domainSuffix: ${DOMAINSUFFIX}

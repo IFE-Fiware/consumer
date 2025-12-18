@@ -30,7 +30,7 @@ spec:
         fullnameOverride: {{ .Values.redis.nameOverride }}
         master:
           podAnnotations:
-            vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+            vault.security.banzaicloud.io/vault-addr: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
             vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
           {{- if .Values.redis.resourcesPreset }}
           resourcesPreset: {{ .Values.redis.resourcesPreset }}
@@ -59,13 +59,13 @@ spec:
         fullnameOverride: {{ .Values.redis_commander.nameOverride }}
         ingress:
           hosts:
-          - host: redis-commander.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+          - host: redis-commander-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
             paths:
               - "/"
           tls:
           - secretName: redis-commander-tls
             hosts:
-              - redis-commander.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+              - redis-commander-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
           annotations:
             cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
         {{- if eq .Values.resourcePreset "low" }}
@@ -89,9 +89,9 @@ spec:
         {{- end }}
       values: |
         fullnameOverride: {{ .Values.keycloak.nameOverride }}
-        apiUrl: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
+        apiUrl: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
         auth:
           adminPassword: vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.namespace }}-keycloak#admin
@@ -102,15 +102,15 @@ spec:
           password: vault:{{ .Values.secrets.secretEngine }}/data/{{ .Values.cluster.namespace }}-postgres-passwords#{{ .Values.cluster.namespace }}-keycloak
         extraEnvVars:
         - name: KC_HOSTNAME_ADMIN
-          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/auth"
         - name: KC_HOSTNAME
-          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/auth"
         - name: USERS_ROLES_BASE_URL
           value: "http://users-roles.{{ .Values.cluster.namespace }}.svc.cluster.local:8080"
         - name: AUTHENTICATION_PROVIDER_BASE_URL
           value: "http://authentication-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080"
         - name: KEYCLOAK_BASE_URL
-          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/auth"
         - name: REALM
           value: "participant"
         - name: KEYCLOAK_EXTRA_ARGS
@@ -137,7 +137,7 @@ spec:
           env:
             - name: REDIRECT_URIS
               value: |-
-                [ "https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/*","https://catalogue-ui.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/*" ]
+                [ "https://participant-fe-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/*","https://catalogue-ui-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/*" ]
             - name: REALM_NAME
               value: realm
             - name: URL
@@ -206,20 +206,20 @@ spec:
         {{- end }}
       values: |
         env:
-          PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
+          PUBLIC_AUTH_KEYCLOAK_SERVER_URL: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
           PUBLIC_FC_DATA_URL: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}/fc"
-          PUBLIC_SEARCH_API_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/xfsc-advsearch-be"
-          PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/contract-consumption"
+          PUBLIC_SEARCH_API_URL: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/xfsc-advsearch-be"
+          PUBLIC_CONTRACT_CONSUMPTION_API_URL: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/contract-consumption"
         ingress:
           hosts:
-            - host: catalogue-ui.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+            - host: catalogue-ui-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
               paths:
               - path: /
                 pathType: ImplementationSpecific
           tls:
             - secretName: catalogue-ui-tld-secret
               hosts:
-                - catalogue-ui.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+                - catalogue-ui-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
           annotations:
             cert-manager.io/cluster-issuer: {{ .Values.cluster.issuer }}
         {{- if eq .Values.resourcePreset "low" }}
@@ -244,9 +244,9 @@ spec:
         - $values/app-values/tier1-gateway/{{ . }}
         {{- end }}
       values: |
-        hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+        hostT1: participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
         cors:
-          allowOrigin: https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
+          allowOrigin: https://participant-fe-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }},https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:3000
         ingress:
           issuer: {{ .Values.cluster.issuer }}
         keycloakUrl: http://keycloak.{{ .Values.cluster.namespace }}.svc.cluster.local
@@ -273,9 +273,9 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
-        hostT1: participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+        hostT1: participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
         authorityHostT2: tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}
         global:
           ingress:
@@ -333,14 +333,14 @@ spec:
       values: |
         ingress:
           issuer: {{ .Values.cluster.issuer }}
-        hostFe: participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+        hostFe: participant-fe-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
         cors:
-          allowOrigin: https://participant.fe.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:4203,http://localhost:3000
+          allowOrigin: https://participant-fe-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }},https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }},http://localhost:4202,http://localhost:4203,http://localhost:3000
         env:
         - name: API_URL
-          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
+          value: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
         - name: KEYCLOAK_URL
-          value: "https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/auth"
+          value: "https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/auth"
         - name: KEYCLOAK_REALM
           value: "participant"
         - name: KEYCLOAK_CLIENT_ID
@@ -366,7 +366,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
         env:
         - name: KAFKA_TIER2GW
@@ -382,7 +382,7 @@ spec:
           bootstrap-servers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
         redis:
           host: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
-        hostT2: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
+        hostT2: "tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
         authorityUrlT1: "https://authority.be.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         kafkaConfig:
           spring:
@@ -440,7 +440,7 @@ spec:
         {{- end }}
       values: |
         podAnnotations:
-          vault.security.banzaicloud.io/vault-addr: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          vault.security.banzaicloud.io/vault-addr: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
           vault.security.banzaicloud.io/vault-role: {{ .Values.secrets.role }}
         urlAuthorityT2: "https://tls.authority.{{ .Values.namespaceTag.authority }}.{{ .Values.domainSuffix }}"
         db:
@@ -459,7 +459,7 @@ spec:
           identityProviderUrl: http://identity-provider.{{ .Values.cluster.namespace }}.svc.cluster.local:8080
         simpl:
           certificate:
-            san: "tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}"
+            san: "tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}"
         redis:
           host: "redis-master.{{ .Values.cluster.namespace }}.svc.cluster.local"
         kafkaConfig:
@@ -507,7 +507,7 @@ spec:
       values: |
         deployment:
           host: {{ .Values.simpl_edc.nameOverride }}-service
-          callbackAddress: "https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc"
+          callbackAddress: "https://tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/edc"
         env:
           datasourceurl: "jdbc:postgresql://pg-cluster.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:5432/{{ .Values.cluster.namespace }}_edc"
           edcParticipantId: {{ .Values.cluster.namespace }}
@@ -515,7 +515,7 @@ spec:
           username: {{ .Values.cluster.namespace }}_edc
         hashicorp:
           role: {{ .Values.secrets.role }}
-          service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          service: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
         secretEngine: {{ .Values.secrets.secretEngine }}
         {{- if eq .Values.resourcePreset "low" }}
         resources:
@@ -543,12 +543,12 @@ spec:
           clusterIssuer: {{ .Values.cluster.issuer }}
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         openapiConfig:
-          servers: https://edc-connector-adapter.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+          servers: https://edc-connector-adapter-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
         openTelemetry:
           otlpExporter:
             endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
         edcConnector:
-          tier2BaseUrl: https://tls.participant.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc
+          tier2BaseUrl: https://tls.participant-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/edc
         kafka:
           bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092 
           topics:
@@ -557,7 +557,7 @@ spec:
           secretEngine: {{ .Values.secrets.secretEngine }}
           secretPath: "{{ .Values.secrets.secretEngine }}/{{ .Values.cluster.namespace }}-edc-connector-adapter"
           role: {{ .Values.secrets.role }}
-          service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          service: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
         {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:
@@ -626,7 +626,7 @@ spec:
             endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
           vault:
             hashicorp:
-              service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+              service: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
               secretEngine: {{ .Values.secrets.secretEngine }}
               role: {{ .Values.secrets.role }}
               secretConfigPath: "{{ .Values.secrets.secretEngine }}/{{ .Values.cluster.namespace }}-contract"
@@ -674,7 +674,7 @@ spec:
         domain: {{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
         connectorAdapter:
           tier1Gateway:
-            url: https://participant.be.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}/edc-connector-adapter
+            url: https://participant-be-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}/edc-connector-adapter
         {{- if eq .Values.resourcePreset "low" }}
         resources:
           requests:
@@ -687,7 +687,7 @@ spec:
         {{- end }}
 
         openapiConfig:
-          servers: https://creation-wizard-api.{{ .Values.namespaceTag.consumer }}.{{ .Values.domainSuffix }}
+          servers: https://creation-wizard-api-{{ .Values.namespaceTag.consumer }}-{{ .Values.domainSuffix }}
         openTelemetry:
           otlpExporter:
             endpoint: http://collector.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}
@@ -695,7 +695,7 @@ spec:
           secretEngine: "{{ .Values.secrets.secretEngine }}"
           secretPath: "{{ .Values.secrets.secretEngine }}/{{ .Values.cluster.namespace }}-contract-consumption-be"
           role: "{{ .Values.secrets.role }}"
-          service: "https://secrets.{{ .Values.namespaceTag.common }}.{{ .Values.domainSuffix }}"
+          service: "https://secrets-{{ .Values.namespaceTag.common }}-{{ .Values.domainSuffix }}"
         kafka:
           bootstrapServers: kafka.{{ .Values.cluster.commonToolsNamespace }}.svc.cluster.local:9092
       releaseName: {{ .Values.contract_consumption_be.nameOverride }}
